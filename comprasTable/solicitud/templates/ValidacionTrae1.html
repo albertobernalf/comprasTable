@@ -1,0 +1,364 @@
+{% extends "Reportes/cabeza.html" %}
+{% load static %}
+
+{% block content %}
+<script>
+    window.onload = function(){
+
+
+         // Fina valor a combo
+
+
+    }
+</script>
+
+<input type="hidden" class="form-control" id="username" name="username" value={{ Username }}>
+<input type="hidden" class="form-control" id="sedeSeleccionada" name="sedeSeleccionada" value={{ SedeSeleccionada }}>
+<input type="hidden" class="form-control" id="nombreUsuario" name="nombreUsuario" value={{NombreUsuario}}>
+<input type="hidden" class="form-control" id="nombreSede" name="nombreSede" value={{ NombreSede }}>
+<input type="hidden" class="form-control" id="solicitudId" name="solicitudId" value={{ SolicitudId }}>
+
+<div class="col-lg-12">
+    <br>
+    <div class="row">
+        <div style=" background-color:#7B67FA ">
+            <center>
+                <H2>
+                    <span style="font-style:font-size:4px">
+                            <b>
+                           <FONT COLOR="white">VALIDACION SOLICITUD  </FONT>
+                            </b>
+                    </span>
+                </H2>
+            </center>
+        </div>
+    </div>
+<br>
+
+    <!-- INICIO ENCABEZADO PROPUESTO -->
+<div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="row">
+                          {% for solicitud in Solicitud %}
+                        <div class="col-md-4">
+                            <h6>FECHA: <span class="text-primary">{{solicitud.fecha}}</span></h6>
+                        </div>
+                        <div class="col-md-3">
+                             <h6>SOLICITUD id: <span class="text-primary">{{solicitud.id}}</span></h6>
+                          </div>
+                          <div class="col-md-5">
+                             <h6>COORDINADOR: <span class="text-primary">{{solicitud.nom_usuario}}</span></h6>
+                          </div>
+                         </div>
+                        <div class="row">
+                          <div class="col-md-4">
+                             <h6>SEDE: <span class="text-primary">{{solicitud.nom_sede}}</span></h6>
+                          </div>
+                         <div class="col-md-4">
+                             <h6>AREA: <span class="text-primary">{{solicitud.nom_area}}</span></h6>
+                          </div>
+                          <div class="col-md-2">
+                             <h6>ESTADO: <span class="text-primary">{{solicitud.estadoReg}}</span></h6>
+                          </div>
+                                  <div class="col-md-2 text-end">
+                            <a class="btn btn-success" href="javascript:void(0)" id="createNewPost"> <i class="fa fa-plus"></i></a>
+                        </div>
+                            </div>
+
+
+                          {% endfor %}
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-success success-msg" style="display:none"></div>
+                    <table class="table table-bordered tablaValidacionDetalle">
+                        <thead>
+                            <tr>
+                                <th width="20">Item</th>
+                                <th width="400">Descripcion</th>
+                                <th>Tipo</th>
+                                <th>Producto</th>
+                                <th>Presentacion</th>
+                                <th>Cantidad</th>
+                                <th>Justificacion</th>
+                                <th>Espec.Tecnicas</th>
+                                <th>Resp.Validacion</th>
+                                <th>Estado validacion</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+<!-- MODAL -->
+
+<div class="modal fade" id="ajaxModel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="modelHeading"></h4>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-danger error-msg" style="display:none">
+                    <ul class="mb-0"></ul>
+                </div>
+                <form id="postForm" name="postForm" class="form-horizontal" novalidate>
+                    {% csrf_token %}
+                    <input type="hidden" name="post_id" id="post_id">
+                    <div class="form-group">
+                        <label for="item" class="col-sm-2 control-label">Item</label>
+                        <div class="col-sm-12">
+                            <input type="text" class="form-control" id="item" name="item" placeholder="Enter Item"
+                                   value="" maxlength="50">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="descripcion" class="col-sm-2 control-label">Item</label>
+                        <div class="col-sm-12">
+                            <input type="text" class="form-control" id="descripcion" name="descripcion" placeholder="Enter descripcion"
+                                   value="" maxlength="50">
+                        </div>
+                    </div>
+                     <div class="form-group">
+                        <label for="tipo" class="col-sm-2 control-label">tipo</label>
+                        <div class="col-sm-12">
+                            <input type="text" class="form-control" id="descripcion" name="tipo" placeholder="Enter tipo"
+                                   value="" maxlength="50">
+                        </div>
+                    </div>
+                      <div class="form-group">
+                        <label for="producto" class="col-sm-2 control-label">tipo</label>
+                        <div class="col-sm-12">
+                            <input type="text" class="form-control" id="producto" name="producto" placeholder="Enter producto"
+                                   value="" maxlength="50">
+                        </div>
+                    </div>
+                           <div class="form-group">
+                        <label for="presentacion" class="col-sm-2 control-label">tipo</label>
+                        <div class="col-sm-12">
+                            <input type="text" class="form-control" id="presentacion" name="presentacion" placeholder="Enter presentacion"
+                                   value="" maxlength="50">
+                        </div>
+                    </div>
+                           <div class="form-group">
+                        <label for="cantidad" class="col-sm-2 control-label">tipo</label>
+                        <div class="col-sm-12">
+                            <input type="text" class="form-control" id="cantidad" name="cantidad" placeholder="Enter cantidad"
+                                   value="" maxlength="50">
+                        </div>
+                    </div>
+
+                             <div class="form-group">
+                        <label for="justificacion" class="col-sm-2 control-label">tipo</label>
+                        <div class="col-sm-12">
+                            <input type="text" class="form-control" id="justificacion" name="justificacion" placeholder="Enter justificacion"
+                                   value="" maxlength="50">
+                        </div>
+                    </div>
+
+                         <div class="form-group">
+                        <label for="espTecnicas" class="col-sm-2 control-label">tipo</label>
+                        <div class="col-sm-12">
+                            <input type="text" class="form-control" id="espTecnicas" name="espTecnicas" placeholder="Enter espTecnicas"
+                                   value="" maxlength="50">
+                        </div>
+                    </div>
+
+
+                           <div class="form-group">
+                        <label for="usuResp" class="col-sm-2 control-label">tipo</label>
+                        <div class="col-sm-12">
+                            <input type="text" class="form-control" id="usuResp" name="usuResp" placeholder="Enter usuResp"
+                                   value="" maxlength="50">
+                        </div>
+                    </div>
+                               <div class="form-group">
+                        <label for="estado" class="col-sm-2 control-label">tipo</label>
+                        <div class="col-sm-12">
+                            <input type="text" class="form-control" id="estado" name="estado" placeholder="Enter estado validacion"
+                                   value="" maxlength="50">
+                        </div>
+                    </div>
+
+                    <div class="col-sm-offset-2 col-sm-10 mt-2">
+                        <button type="submit" class="btn btn-primary" id="saveBtn" value="create">Graba Cambios
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- FIN  MODAL -->
+
+<!-- FIN ENCABEZADO PROPUESTO  -->
+
+
+
+
+<!--             <input type="button" id="btnValSol" name="btnValSol" value="Enviar Validacion" onclick="validarTraeSolicitud()"> </input> -->
+<br>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        /*------------------------------------------
+        --------------------------------------------
+        Post Listing Page
+        --------------------------------------------
+        --------------------------------------------*/
+        var table = $('.tablaValidacionDetalle').DataTable({
+            processing: true,
+            serverSide: false,
+            columnDefs: [
+                {
+                    "render": function ( data, type, row ) {
+                        var btn = '';
+
+                        btn = btn + " <button class='btn btn-primary editPost' data-pk='" + row.pk + "'>" + '<i class="fa fa-pencil"></i>' + "</button>";
+                        btn = btn + " <button class='btn btn-danger deletePost' data-action='post/" + row.pk + "/delete' data-pk='" + row.pk + "'>" + '<i class="fa fa-trash"></i>' + "</button>";
+
+                        return btn;
+                    },
+                    "targets": 3
+                }
+            ],
+            ajax: {
+                url: "{% url 'load_data' %}",
+                dataSrc: "",
+            },
+            columns: [
+                { data: "pk" },
+                { data: "fields.title" },
+                { data: "fields.description" },
+            ]
+        });
+
+        /*------------------------------------------
+        --------------------------------------------
+        Click to Button
+        --------------------------------------------
+        --------------------------------------------*/
+        $('#createNewPost').click(function () {
+            $('#saveBtn').val("Create Post");
+            $('#post_id').val('');
+            $('#postForm').trigger("reset");
+            $('#modelHeading').html("Create New Post");
+            $('#ajaxModel').modal('show');
+        });
+
+        /*------------------------------------------
+        --------------------------------------------
+        Click to Edit Button
+        --------------------------------------------
+        --------------------------------------------*/
+        $('body').on('click', '.editPost', function () {
+            var post_id = $(this).data('pk');
+            $.get("post" +'/' + post_id +'/edit/', function (data) {
+                $('#modelHeading').html("Edit Post");
+                $('#saveBtn').val("edit-post");
+                $('#ajaxModel').modal('show');
+                $('#post_id').val(data.id);
+                $('#title').val(data.title);
+                $('#description').val(data.description);
+            })
+        });
+
+        /*------------------------------------------
+        --------------------------------------------
+        Print Error Msg
+        --------------------------------------------
+        --------------------------------------------*/
+        function printErrorMsg(msg) {
+            $('.error-msg').find('ul').html('');
+            $('.error-msg').css('display','block');
+            $.each( msg, function( key, value ) {
+                $(".error-msg").find("ul").append('<li>'+value+'</li>');
+            });
+        }
+
+        /*------------------------------------------
+        --------------------------------------------
+        Create Post Code
+        --------------------------------------------
+        --------------------------------------------*/
+        $('#saveBtn').click(function (e) {
+            e.preventDefault();
+            $(this).html('Sending..');
+
+            $.ajax({
+                data: $('#postForm').serialize(),
+                url: "{% url 'post_store' %}",
+                type: "POST",
+                dataType: 'json',
+                success: function (data) {
+                    if ($.isEmptyObject(data.error)) {
+                        $("input[name='title']").val('');
+                        $("input[name='description']").val('');
+                        $('#ajaxModel').modal('hide');
+                        $('.success-msg').css('display','block');
+                        $('.success-msg').text(data.message);
+                    }else{
+                        printErrorMsg(data.error)
+                    }
+                    $('#postForm').trigger("reset");
+                    table.ajax.reload();
+
+                },
+                error: function (data) {
+                    $('#saveBtn').html('Save Changes');
+                }
+            });
+        });
+
+        /*------------------------------------------
+        --------------------------------------------
+        Delete Post Code
+        --------------------------------------------
+        --------------------------------------------*/
+        $("body").on("click",".deletePost",function(){
+            var current_object = $(this);
+            swal({
+                title: "Are you sure?",
+                text: "You will not be able to recover this imaginary file!",
+                type: "error",
+                showCancelButton: true,
+                dangerMode: true,
+                cancelButtonClass: '#DD6B55',
+                confirmButtonColor: '#dc3545',
+                confirmButtonText: 'Delete!',
+            },function (result) {
+                if (result) {
+                    var action = current_object.attr('data-action');
+                    var token = $("input[name=csrfmiddlewaretoken]").val();
+                    var id = current_object.attr('data-pk');
+
+                    $('body').html("<form class='form-inline remove-form' method='post' action='"+action+"'></form>");
+                    $('body').find('.remove-form').append('<input name="_method" type="hidden" value="delete">');
+                    $('body').find('.remove-form').append('<input name="csrfmiddlewaretoken" type="hidden" value="'+token+'">');
+                    $('body').find('.remove-form').append('<input name="id" type="hidden" value="'+id+'">');
+                    $('body').find('.remove-form').submit();
+                }
+            });
+        });
+    });
+</script>
+
+<!--Fin PantallaGrupos       -->
+
+{% endblock %}
+
+{% block SUBGRUPO %}
+{% endblock %}
