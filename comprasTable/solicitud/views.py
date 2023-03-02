@@ -651,10 +651,7 @@ def guardarSolicitudes(request, username,sedeSeleccionada,nombreUsuario,fecha,no
 
     return HttpResponse('Solicitud creada No ' + str(solicitudId))
 
-
-
     #debe habes un POST
-
 
 def ValidacionConsulta(request , username, sedeSeleccionada, nombreUsuario, nombreSede):
     pass
@@ -690,248 +687,6 @@ def ValidacionConsulta(request , username, sedeSeleccionada, nombreUsuario, nomb
 
 
 
-#def ValidacionVerifica(request , username, sedeSeleccionada, nombreUsuario, nombreSede):
-def ValidacionBusca(request):
-    pass
-    print ("Entre a validacionBusca");
-    context = {}
-    username = request.POST["username"]
-    nombreSede = request.POST["nombreSede"]
-    nombreUsuario = request.POST["nombreUsuario"]
-    sedeSeleccionada = request.POST["sedeSeleccionada"]
-    solicitudId = request.POST["solicitudId"]
-
-    print("username = ", username)
-    print("sedeSeleccionada = ", sedeSeleccionada)
-    print("solicitudId = ", solicitudId)
-    context['Username'] = username
-    context['SedeSeleccionada'] = sedeSeleccionada
-    context['NombreUsuario'] = nombreUsuario
-    context['NombreSede'] = nombreSede
-    context['SolicitudId'] = solicitudId
-
-    # Buscamos la solicitud
-
-    miConexion = psycopg2.connect(host="192.168.0.237", database="bd_solicitudes", port="5432", user="postgres",
-                                  password="BD_m3d1c4l")
-    cur = miConexion.cursor()
-    #Pendiente de reemplazo
-    comando = "SELECT sol.id id, to_char(sol.fecha, 'YYYY-MM-DD HH:MM.SS')  fecha, sol.estadoReg estadoReg,sol.usuarios_id usuarioId , usu.nom_usuario nom_usuario, area.area nom_area, sede.nom_sede  nom_sede FROM public.solicitud_solicitudes sol ,public.solicitud_areas area , public.solicitud_sedesCompra sede, public.solicitud_usuarios usu WHERE sol.id = " + solicitudId + " AND area.id = sol.area_id and area.sede_id = sede.id and sol.usuarios_id = usu.id"
-    cur.execute(comando)
-    print(comando)
-
-    solicitud = []
-
-    for id, fecha,  estadoReg,usuarioId ,nom_usuario, nom_area, nom_sede in cur.fetchall():
-        solicitud.append({'id': id, 'fecha': fecha,'estadoReg': estadoReg, 'usuarioId':usuarioId,'nom_usuario':nom_usuario,'nom_area':nom_area,'nom_sede' :nom_sede  })
-
-    miConexion.close()
-    print ("solicitud")
-    print (solicitud)
-
-    context['Solicitud'] = solicitud
-
-    # Ahora SolicitudDetalle
-
-    miConexion = psycopg2.connect(host="192.168.0.237", database="bd_solicitudes", port="5432", user="postgres",
-                                  password="BD_m3d1c4l")
-    #cur = miConexion.cursor()
-
-    miConexion.set_client_encoding('LATIN1')
-    cur = miConexion.cursor()
-    cur.execute("set client_encoding='LATIN1';")
-
-    #comando = "SELECT sol.id id, sol.fecha fecha, sol.estadoReg estadoReg,sol.usuarios_id usuarioId , usu.nom_usuario nom_usuario, area.area nom_area, sede.nom_sede  nom_sede FROM public.solicitud_solicitudes sol ,public.solicitud_areas area , public.solicitud_sedesCompra sede, public.solicitud_usuarios usu WHERE sol.id = " + solicitudId + " AND area.id = sol.area_id and area.sede_id = sede.id and sol.usuarios_id = usu.id"
-    comando = 'SELECT sol.id id,sol.item item, sol.descripcion_id, des.nombre descripcion, tip.nombre tipo ,  art.articulo producto ,pres.nombre presentacion,sol.cantidad, sol.justificacion  , sol."especificacionesTecnicas" tec,usu.nom_usuario usuResp  , est.nombre estValidacion, sol."estadosValidacion_id" estadosValidacion_id  FROM public.solicitud_solicitudesDetalle sol , public.solicitud_descripcioncompra des, public.solicitud_tiposcompra tip, public.solicitud_presentacion pres, public.mae_articulos art    , public.solicitud_usuarios usu , public.solicitud_estadosvalidacion est  WHERE sol.solicitud_id = ' + solicitudId + ' AND des.id = sol.descripcion_id and tip.id = sol."tiposCompra_id" and pres.id = sol.presentacion_id and art.codreg_articulo = sol.producto and usu.id = sol."usuarioResponsableValidacion_id" and est.id = sol."estadosValidacion_id" ORDER BY sol.item'
-    cur.execute(comando)
-    print(comando)
-
-    solicitudDetalle = []
-
-    for id, item, descripcion_id, descripcion, tipo, producto, presentacion, cantidad, justificacion, tec, usuResp , estValidacion , estadosValidacion_id in cur.fetchall():
-        solicitudDetalle.append(
-            {'id': id, 'item':item , 'descripcion_id': descripcion_id, 'descripcion': descripcion, 'tipo': tipo, 'producto': producto,
-             'presentacion': presentacion, 'cantidad': cantidad, 'justificacion': justificacion, 'tec':tec, 'usuResp':usuResp, 'estValidacion': estValidacion, 'estadosValidacion_id':estadosValidacion_id})
-
-    miConexion.close()
-    print("solicitudDetalle")
-    print(solicitudDetalle)
-
-    context['SolicitudDetalle'] = solicitudDetalle
-
-    ## Voy a enviar estadosSolicitudes
-
-    miConexion = psycopg2.connect(host="192.168.0.237", database="bd_solicitudes", port="5432", user="postgres",
-                                  password="BD_m3d1c4l")
-    cur = miConexion.cursor()
-
-    comando = 'SELECT id,nombre FROM public.solicitud_estadosValidacion est'
-    cur.execute(comando)
-    print(comando)
-
-    estadosValidacion = []
-
-    for id, nombre in cur.fetchall():
-        estadosValidacion.append({'id': id, 'nombre': nombre})
-
-    miConexion.close()
-    print("estadosValidacion")
-    print(estadosValidacion)
-
-    context['EstadosValidacion'] = estadosValidacion
-
-
-    ## Fin  a enviar estadosSolicitudes
-    print ("solicitud = ", solicitud)
-    # Fin SolicitudDetalle
-    if (solicitud == []):
-        print ("Entre por No existe")
-        context['Error'] = 'Solicitud No Existe '
-        miConexion = psycopg2.connect(host="192.168.0.237", database="bd_solicitudes", port="5432", user="postgres",
-                                      password="BD_m3d1c4l")
-
-        miConexion.set_client_encoding('LATIN1')
-        cur = miConexion.cursor()
-        cur.execute("set client_encoding='LATIN1';")
-        comando = "SELECT areas.id id ,areas.area  area FROM public.solicitud_areas areas, public.solicitud_sedesCompra sedes WHERE areas.estadoreg = 'A' and areas.sede_id = sedes.id and  sedes.codreg_sede = '" + sedeSeleccionada + "' order by areas.area"
-        cur.execute(comando)
-        print(comando)
-        areas = []
-        areas.append({'id': '', 'area': ''})
-
-        for id, area in cur.fetchall():
-            areas.append({'id': id, 'area': area})
-
-        miConexion.close()
-
-        context['Areas'] = areas
-
-        #return render(request, "Reportes/ValidacionConsulta.html", context)
-        print ("ME DEVUELVO CON EL JSON")
-        return JsonResponse(context)
-
-    else:
-       return render(request, "Reportes/ValidacionTrae1.html", context)
-
-
-
-#def GuardarValidacion(request):
-def GuardarValidacion(request,  username, sedeSeleccionada, nombreUsuario, nombreSede, enviovalidacionDef):
-
-    pass
-    print ("Entre a validacionVerifica");
-    context = {}
-
-    username = request.POST["username"]
-    #nombreSede = request.POST["nombreSede"]
-    #nombreUsuario = request.POST["nombreUsuario"]
-    #sedeSeleccionada = request.POST["sedeSeleccionada"]
-    #solicitudId = request.POST["solicitudId"]
-
-    enviovalidacionDef = request.POST["enviovalidacionDef"]
-    print ("enviovalidacionDef = ", enviovalidacionDef)
-
-    JsonDicenviovalidacionDef = json.loads(enviovalidacionDef)
-    print("Diccionario JsonDicenviovalidacionDef = ", JsonDicenviovalidacionDef)
-
-    # Voy a iterar
-    campo = {}
-    item = 1
-
-    print ("username = ", username)
-    miConexion = psycopg2.connect(host="192.168.0.237", database="bd_solicitudes", port="5432", user="postgres",
-                                  password="BD_m3d1c4l")
-    cur = miConexion.cursor()
-
-    comando = "SELECT id idActual FROM solicitud_usuarios WHERE num_identificacion = '" + str(username) + "'"
-    print(comando)
-    cur.execute(comando)
-    idActualActual = []
-
-    for idActual in cur.fetchall():
-        idActualActual.append({'idActual': idActual})
-
-    print ("idActual =", idActual)
-
-    for dato in idActualActual:
-        print(dato)
-        print(dato['idActual'])
-        print(json.dumps(dato['idActual']))
-        idActual = json.dumps(dato['idActual'])
-
-
-    idActual = idActual.replace('[', '')
-    idActual = idActual.replace(']', '')
-    print("idActual FINAL = ", idActual)
-
-    miConexion.close()
-
-    for x in range(0, len(JsonDicenviovalidacionDef)):
-                print(JsonDicenviovalidacionDef[x])
-                campo1 = JsonDicenviovalidacionDef[x]
-                campo = json.loads(campo1)
-                print(campo['solicitudId'])
-                print(campo['item'])
-                print(campo['espTecnica'])
-                print(campo['idEstado'])
-
-                solicitudId =  campo['solicitudId']
-                item = campo['item']
-                espTecnica = campo['espTecnica']
-                idEstado = campo['idEstado']
-
-
-                ## BUSCO EL ID DEL ITEM PARA VER SI CAMBIO EN ALGO
-
-                miConexion = psycopg2.connect(host="192.168.0.237", database="bd_solicitudes", port="5432", user="postgres",
-                                              password="BD_m3d1c4l")
-                cur = miConexion.cursor()
-
-                comando = 'SELECT "especificacionesTecnicas" especificacionesTecnicasAntes, "estadosValidacion_id" estadosValidacion_id FROM solicitud_solicitudesdetalle SOL WHERE solicitud_id = ' + str(solicitudId) + ' AND item = ' + str(item)
-                print(comando)
-                cur.execute(comando)
-
-                solicitudDetalle = []
-
-                for especificacionesTecnicasAntes,estadosValidacion_idAntes in cur.fetchall():
-                    solicitudDetalle.append({'especificacionesTecnicasAntes': especificacionesTecnicasAntes, 'estadosValidacion_idAntes':estadosValidacion_idAntes })
-
-                miConexion.close()
-
-                especificacionesTecnicasAntes = solicitudDetalle[0]['especificacionesTecnicasAntes']
-                estadosValidacion_idAntes =  solicitudDetalle[0]['estadosValidacion_idAntes']
-
-                print ("especificacionesTecnicasAntes",especificacionesTecnicasAntes )
-                print("estadosValidacion_idAntes", estadosValidacion_idAntes)
-                print ("EspTecnicaActual",espTecnica )
-                print("estadosValidacion_id Actual", idEstado)
-
-                if (str(especificacionesTecnicasAntes) != str(espTecnica) or  str(estadosValidacion_idAntes) != str(idEstado) ):
-
-                ## SI CAMBI EN ALGO ENTONCES UPDATEO LOS RES CAMPOS
-                    print ("Entre HUBO CAMBIO DE ITEM")
-
-                    miConexion = psycopg2.connect(host="192.168.0.237", database="bd_solicitudes", port="5432", user="postgres",
-                                   password="BD_m3d1c4l")
-                    cur = miConexion.cursor()
-
-
-                    comando = 'UPDATE solicitud_solicitudesdetalle SET "especificacionesTecnicas" = ' + "'"  + str(espTecnica) + "'" + ', "estadosValidacion_id" = ' + str(idEstado) +    ', "usuarioResponsableValidacion_id" = ' + str(idActual) + ' WHERE solicitud_id = ' + str(solicitudId) + ' and item = ' + str(item) + ' RETURNING id;'
-
-                    print(comando)
-                    resultado = cur.execute(comando)
-                    print("resultado =", resultado)
-                    n = cur.rowcount
-                    print("Registros commit = ", n)
-
-                    miConexion.commit()
-                    actualizado = cur.fetchone()[0]
-
-                    print("actualizado = ", actualizado)
-                    miConexion.close()
-
-
-    return HttpResponse('Solicitud No: ' + solicitudId + ' Validada')
 
 # Create your views here.
 def load_dataValidacion(request, solicitudId):
@@ -1204,8 +959,6 @@ class PostStoreValidacion(TemplateView):
         #HASTA AQUIP
 
 
-
-
 def post_editValidacion(request,id,username,sedeSeleccionada,nombreUsuario,nombreSede,solicitudId):
     print ("Entre POST edit")
     print ("id = " , id)
@@ -1292,4 +1045,445 @@ def post_deleteValidacion(request,id):
     solicitudesDetalle.delete()
     return HttpResponseRedirect(reverse('index'))
 
-# Create your views here.
+# Fin Create your views here. para validacion
+
+
+# Create your views here. para Almacen
+def AlmacenConsulta(request , username, sedeSeleccionada, nombreUsuario, nombreSede) :
+    pass
+    print("Entre a consulta Solicitudes a Almacen");
+    context = {}
+
+    print("username = ", username)
+    context['Username'] = username
+    context['SedeSeleccionada'] = sedeSeleccionada
+    context['solicitudesForm'] = solicitudesForm
+    context['NombreUsuario'] = nombreUsuario
+    context['NombreSede'] = nombreSede
+
+    miConexion = psycopg2.connect(host="192.168.0.237", database="bd_imhotep", port="5432", user="postgres",
+                                  password="BD_m3d1c4l")
+    cur = miConexion.cursor()
+    comando = "SELECT areas.id id ,areas.area  area FROM public.solicitud_areas areas, public.solicitud_sedesCompra sedes WHERE areas.estadoreg = 'A' and areas.sede_id = sedes.id and  sedes.codreg_sede = '" + sedeSeleccionada + "' order by areas.area"
+    # Reemplazado
+    # comando = "SELECT areas.codreg_area id ,areas.area  area FROM mae_areas areas, imhotep_sedes sedes WHERE areas.activo = 'S' and areas.sede = sedes.sede and sedes.codreg_sede = '" + sedeSeleccionada + "' order by areas.area"
+    cur.execute(comando)
+    print(comando)
+
+    areas = []
+
+    for id, area in cur.fetchall():
+        areas.append({'id': id, 'area': area})
+
+    miConexion.close()
+
+    context['Areas'] = areas
+
+    return render(request, "Reportes/AlmacenConsulta.html", context)
+
+
+class PostStoreAlmacen(TemplateView):
+    form_class = solicitudesDetalleForm
+    template_name = 'Reportes/AlmacenTrae.html'
+
+    def post(self, request):
+        print ("Entre a Grabar almacen")
+
+        context = {}
+
+        print("OPS Entre pos POST DEL VIEW")
+
+        username = request.POST["username"]
+        nombreSede = request.POST["nombreSede"]
+        nombreUsuario = request.POST["nombreUsuario"]
+        sedeSeleccionada = request.POST["sedeSeleccionada"]
+        solicitudId = request.POST["solicitudId"]
+
+        context['Username'] = username
+        context['SedeSeleccionada'] = sedeSeleccionada
+        context['NombreUsuario'] = nombreUsuario
+        context['NombreSede'] = nombreSede
+        context['solicitudId'] = solicitudId
+
+        print ("CONTEXTO solicitudId", solicitudId)
+
+        form = self.form_class(request.POST)
+
+        data = {'error': form.errors}
+        print ("DATA MALUCA = ", data)
+
+        if form.is_valid():
+            try:
+                print ("Entre forma valida")
+
+                estadosAlmacenAct = request.POST.get('estadosAlmacen')
+                especificacionesAlmacenAct = request.POST.get('especificacionesAlmacen')
+
+                ## AVERIGUAMOS EL ID DEL USUARIO
+
+                miConexion = psycopg2.connect(host="192.168.0.237", database="bd_solicitudes", port="5432", user="postgres",
+                                              password="BD_m3d1c4l")
+                cur = miConexion.cursor()
+
+                comando = "SELECT id idActual FROM solicitud_usuarios WHERE num_identificacion = '" + str(username) + "'"
+                print(comando)
+                cur.execute(comando)
+                idActualActual = []
+
+                for idActual in cur.fetchall():
+                    idActualActual.append({'idActual': idActual})
+
+                print("idActual =", idActual)
+
+                for dato in idActualActual:
+                    print(dato)
+                    print(dato['idActual'])
+                    print(json.dumps(dato['idActual']))
+                    idActual = json.dumps(dato['idActual'])
+
+                idActual = idActual.replace('[', '')
+                idActual = idActual.replace(']', '')
+                print("idActual FINAL = ", idActual)
+
+                miConexion.close()
+
+                ## FIN AVERIGIAMOS ID DE USUARIO
+                usuAlmacenAct = idActual
+
+                print ("estadosAlmacenAct = ",estadosAlmacenAct )
+                print("especificacionesAlmacenAct = ", especificacionesAlmacenAct)
+                print("usuAlmacenAct = ", usuAlmacenAct)
+                pk = request.POST.get('pk')
+                print("pk = ", pk)
+
+                obj = get_object_or_404(SolicitudesDetalle, id=request.POST.get('pk'))
+                estadosAlmacenAnt = obj.estadosAlmacen
+                especificacionesAlmacenAnt = obj.especificacionesAlmacen
+                usuAlmacenAnt = obj.usuarioResponsableAlmacen_id
+
+                if (str(especificacionesAlmacenAnt) != str(especificacionesAlmacenAct) or str(estadosAlmacenAnt) != str(estadosAlmacenAct)):
+
+                    obj.estadosAlmacen_id = EstadosValidacion.objects.get(id=estadosAlmacenAct)
+                    obj.especificacionesAlmacen=especificacionesAlmacenAct
+                    obj.usuarioResponsableAlmacen_id = usuAlmacenAct
+                    obj.save()
+
+                return JsonResponse({'success': True, 'message': 'Solicitud Detalle Updated Successfully!'})
+            except:
+                if (str(especificacionesTecnicasAnt) != str(especificacionesTecnicasAct) or str(estadosValidacionAnt) != str(estadosValidacionAct)):
+                    obj.estadosAlmacen_id = EstadosValidacion.objects.get(id=estadosAlmacenAct)
+                    obj.especificacionesAlmacen = especificacionesAlmacenAct
+                    obj.usuarioResponsableAlmacen_id = usuAlmacenAct
+                    obj.save()
+
+                return JsonResponse({'success': True, 'message': 'Solicitud Detalle Created Successfully!'})
+        else:
+            return JsonResponse({'error': True, 'error': form.errors})
+        return render(request, self.template_name,{'data':data})
+
+    def get_context_data(self, **kwargs):
+        print("ENTRE POR EL GET_CONTEXT DEL VIEW")
+        solicitudId = self.request.GET["solicitudId"]
+        username = self.request.GET["username"]
+        sedeSeleccionada = self.request.GET["sedeSeleccionada"]
+        nombreUsuario = self.request.GET["nombreUsuario"]
+        nombreSede = self.request.GET["nombreSede"]
+
+        print("SolictudId =", solicitudId)
+        print("username =", username)
+        print("sedeSeleccionada =", sedeSeleccionada)
+        print("nombreUsuario =", nombreUsuario)
+        print("nombreSede =", nombreSede)
+
+
+        #context = super(PostStore, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
+
+        context['Username'] = username
+        context['SedeSeleccionada'] = sedeSeleccionada
+        context['NombreUsuario'] = nombreUsuario
+        context['NombreSede'] = nombreSede
+        context['SolicitudId'] = solicitudId
+
+        #DESDE AQUIP
+
+        # Buscamos estadosValidacion
+
+        miConexion = psycopg2.connect(host="192.168.0.237", database="bd_solicitudes", port="5432", user="postgres",
+                                      password="BD_m3d1c4l")
+        cur = miConexion.cursor()
+
+        comando = 'SELECT id,nombre FROM public.solicitud_estadosValidacion est'
+        cur.execute(comando)
+        print(comando)
+
+        estadosValidacion = []
+
+        for id, nombre in cur.fetchall():
+            estadosValidacion.append({'id': id, 'nombre': nombre})
+
+        miConexion.close()
+        print("estadosValidacion")
+        print(estadosValidacion)
+
+        context['EstadosValidacion'] = estadosValidacion
+
+        # Fin buscamos estdos validacion
+
+        # Buscamos estadosAlmacen
+
+        miConexion = psycopg2.connect(host="192.168.0.237", database="bd_solicitudes", port="5432", user="postgres",
+                                      password="BD_m3d1c4l")
+        cur = miConexion.cursor()
+
+        comando = 'SELECT id,nombre FROM public.solicitud_estadosValidacion est'
+        cur.execute(comando)
+        print(comando)
+
+        estadosAlmacen = []
+
+        for id, nombre in cur.fetchall():
+            estadosAlmacen.append({'id': id, 'nombre': nombre})
+
+        miConexion.close()
+        print("estadosAlmacen")
+        print(estadosAlmacen)
+
+        context['EstadosAlmacen'] = estadosAlmacen
+
+        # Fin buscamos estados Almacen
+
+
+
+        # Buscamos la solicitud
+
+        miConexion = psycopg2.connect(host="192.168.0.237", database="bd_solicitudes", port="5432", user="postgres",
+                                      password="BD_m3d1c4l")
+        cur = miConexion.cursor()
+        # Pendiente de reemplazo
+        comando = "SELECT sol.id id, to_char(sol.fecha, 'YYYY-MM-DD HH:MM.SS')  fecha, sol.estadoReg estadoReg,sol.usuarios_id usuarioId , usu.nom_usuario nom_usuario, area.area nom_area, sede.nom_sede  nom_sede FROM public.solicitud_solicitudes sol ,public.solicitud_areas area , public.solicitud_sedesCompra sede, public.solicitud_usuarios usu WHERE sol.id = " + solicitudId + " AND area.id = sol.area_id and area.sede_id = sede.id and sol.usuarios_id = usu.id"
+        cur.execute(comando)
+        print(comando)
+
+        solicitud = []
+
+        for id, fecha, estadoReg, usuarioId, nom_usuario, nom_area, nom_sede in cur.fetchall():
+            solicitud.append(
+                {'id': id, 'fecha': fecha, 'estadoReg': estadoReg, 'usuarioId': usuarioId, 'nom_usuario': nom_usuario,
+                 'nom_area': nom_area, 'nom_sede': nom_sede})
+
+        miConexion.close()
+        print("solicitud")
+        print(solicitud)
+
+        context['Solicitud'] = solicitud
+
+        # Ahora SolicitudDetalle
+        # Fin SolicitudDetalle
+        if (solicitud == []):
+            print("Entre por No existe")
+            context['Error'] = 'Solicitud No Existe '
+            miConexion = psycopg2.connect(host="192.168.0.237", database="bd_solicitudes", port="5432", user="postgres",
+                                          password="BD_m3d1c4l")
+
+            miConexion.set_client_encoding('LATIN1')
+            cur = miConexion.cursor()
+            cur.execute("set client_encoding='LATIN1';")
+            comando = "SELECT areas.id id ,areas.area  area FROM public.solicitud_areas areas, public.solicitud_sedesCompra sedes WHERE areas.estadoreg = 'A' and areas.sede_id = sedes.id and  sedes.codreg_sede = '" + sedeSeleccionada + "' order by areas.area"
+            cur.execute(comando)
+            print(comando)
+            areas = []
+            areas.append({'id': '', 'area': ''})
+
+            for id, area in cur.fetchall():
+                areas.append({'id': id, 'area': area})
+
+            miConexion.close()
+
+            context['Areas'] = areas
+
+            print ("No encontre data")
+
+            #return HttpResponse(context, content_type='application/json')
+            #return JsonResponse(context)
+            #return render(self.request, "Reportes/ValidacionConsulta.html", {'ERROR':'Solicitud No Existe'})
+            return context
+        else:
+            return context
+
+
+        #HASTA AQUIP class PostStoreAlmacen
+
+def load_dataAlmacen(request, solicitudId):
+    print ("Entre load_data")
+    print("solicitudId = ",solicitudId)
+
+    #print("data = ", request.GET('data'))
+
+    solicitudesDetalleList = SolicitudesDetalle.objects.all().filter(solicitud_id=solicitudId)
+
+    # Ahora SolicitudDetalle
+    context= {}
+
+    # Abro Conexion
+
+    miConexion = psycopg2.connect(host="192.168.0.237", database="bd_solicitudes", port="5432", user="postgres",
+                                  password="BD_m3d1c4l")
+    # cur = miConexion.cursor()
+
+    miConexion.set_client_encoding('LATIN1')
+    cur = miConexion.cursor()
+    cur.execute("set client_encoding='LATIN1';")
+
+    # comando = "SELECT sol.id id, sol.fecha fecha, sol.estadoReg estadoReg,sol.usuarios_id usuarioId , usu.nom_usuario nom_usuario, area.area nom_area, sede.nom_sede  nom_sede FROM public.solicitud_solicitudes sol ,public.solicitud_areas area , public.solicitud_sedesCompra sede, public.solicitud_usuarios usu WHERE sol.id = " + solicitudId + " AND area.id = sol.area_id and area.sede_id = sede.id and sol.usuarios_id = usu.id"
+    #comando = 'SELECT sol.id id,sol.item item, sol.descripcion_id, des.nombre descripcion, tip.nombre tipo ,sol.producto producto,  art.articulo nombre_producto ,pres.nombre presentacion,sol.cantidad, sol.justificacion  , sol."especificacionesTecnicas" tec,usu.nom_usuario usuResp  , est.nombre estValidacion, sol."estadosValidacion_id" estadosValidacion_id  FROM public.solicitud_solicitudesDetalle sol , public.solicitud_descripcioncompra des, public.solicitud_tiposcompra tip, public.solicitud_presentacion pres, public.mae_articulos art    , public.solicitud_usuarios usu , public.solicitud_estadosvalidacion est  WHERE sol.solicitud_id = ' + solicitudId + ' AND des.id = sol.descripcion_id and tip.id = sol."tiposCompra_id" and pres.id = sol.presentacion_id and art.codreg_articulo = sol.producto and usu.id = sol."usuarioResponsableValidacion_id" and est.id = sol."estadosValidacion_id" ORDER BY sol.item'
+    comando =  'SELECT sol.id id,sol.item item, sol.descripcion_id, des.nombre descripcion, tip.nombre tipo ,sol.producto producto,  art.articulo nombre_producto ,pres.nombre presentacion,sol.cantidad, sol.justificacion  , sol."especificacionesTecnicas" tec,usu.nom_usuario usuResp  , est.nombre estValidacion,est1.nombre estadosAlmacen, sol."estadosValidacion_id" estadosValidacion_id, sol."especificacionesAlmacen" especificacionesAlmacen, sol."estadosAlmacen_id" estadosAlmacen_id ,   usu1.nom_usuario usuAlmacen FROM public.solicitud_solicitudesDetalle sol , public.solicitud_descripcioncompra des, public.solicitud_tiposcompra tip, public.solicitud_presentacion pres, public.mae_articulos art    , public.solicitud_usuarios usu , public.solicitud_usuarios usu1 , public.solicitud_estadosvalidacion est , public.solicitud_estadosvalidacion est1  WHERE sol.solicitud_id = ' + solicitudId + ' AND des.id = sol.descripcion_id and tip.id = sol."tiposCompra_id" and pres.id = sol.presentacion_id and art.codreg_articulo = sol.producto and usu1.id = sol."usuarioResponsableAlmacen_id" and usu.id = sol."usuarioResponsableValidacion_id" and est1.id = sol."estadosAlmacen_id" and est.id = sol."estadosValidacion_id" ORDER BY sol.item'
+
+    cur.execute(comando)
+    print(comando)
+
+    solicitudDetalle = []
+    #solicitudDetalle.append({"model":"solicitud.solicitudesdetalle"})
+
+    for id, item, descripcion_id, descripcion, tipo, producto, nombre_producto, presentacion, cantidad, justificacion, tec, usuResp, estValidacion, estadosAlmacen, estadosValidacion_id, especificacionesAlmacen, estadosAlmacen_id , usuAlmacen  in cur.fetchall():
+        solicitudDetalle.append(
+            {"model":"solicitud.solicitudesdetalle","pk":id,"fields":
+            {"id": id, "item": item, "'descripcion_id": descripcion_id, "descripcion": descripcion, "tiposCompra": tipo,
+             "producto": producto,"nombre_producto": nombre_producto,
+             "presentacion": presentacion, "cantidad": cantidad, "justificacion": justificacion, "especificacionesTecnicas": tec,
+             "usuarioResponsableValidacion": usuResp, "estadosValidacion": estValidacion,
+             "estadosAlmacen": estadosAlmacen,
+             "estadosValidacion_id": estadosValidacion_id,
+             "especificacionesAlmacen":especificacionesAlmacen  , "estadosAlmacen_id":estadosAlmacen_id, "usuAlmacen":usuAlmacen
+             }})
+
+    miConexion.close()
+    print("solicitudDetalle")
+    print(solicitudDetalle)
+
+    # Cierro Conexion
+
+    #{"model": "solicitud.solicitudesdetalle", "pk": 6, "fields":
+
+    context['SolicitudDetalle'] = solicitudDetalle
+
+    serialized1 = json.dumps(solicitudDetalle)
+
+    print ("Envio = ", json)
+
+    return HttpResponse(serialized1, content_type='application/json')
+
+
+def post_editAlmacen(request,id,username,sedeSeleccionada,nombreUsuario,nombreSede,solicitudId):
+    print ("Entre POST edit")
+    print ("id = " , id)
+
+    print ("username =" , username)
+    print("sedeSeleccionada =", sedeSeleccionada)
+    print("nombreUsuario =", nombreUsuario)
+    print("nombreSede =", nombreSede)
+    print("solicitudId =", solicitudId)
+
+    context = {}
+    context['Username'] = username
+    context['SedeSeleccionada'] = sedeSeleccionada
+    context['NombreUsuario'] = nombreUsuario
+    context['NombreSede'] = nombreSede
+    context['solicitudId'] = solicitudId
+
+
+
+    if request.method == 'GET':
+
+        #solicitudesDetalle = SolicitudesDetalle.objects.filter(id=id).first()
+
+        # Abro Conexion
+
+        miConexion = psycopg2.connect(host="192.168.0.237", database="bd_solicitudes", port="5432", user="postgres",
+                                      password="BD_m3d1c4l")
+        # cur = miConexion.cursor()
+
+        miConexion.set_client_encoding('LATIN1')
+        cur = miConexion.cursor()
+        cur.execute("set client_encoding='LATIN1';")
+
+        comando = 'SELECT sol.id id ,sol.item item, sol.descripcion_id descripcion_id, des.nombre descripcion,sol."tiposCompra_id" tiposCompra_id, tip.nombre tipo , sol.producto producto, substring(art.articulo,1,150) nombre_producto ,sol.presentacion_id  presentacion_id, pres.nombre presentacion,sol.cantidad, sol.justificacion  , sol."especificacionesTecnicas" tec, sol."usuarioResponsableValidacion_id" usuarioResponsableValidacion_id,  usu.nom_usuario usuResp  , est.nombre estValidacion,est1.nombre estadosAlmacen  , sol."estadosValidacion_id" estadosValidacion_id ,  sol."especificacionesAlmacen" especificacionesAlmacen, sol."estadosAlmacen_id" estadosAlmacen_id ,   usu1.nom_usuario usuAlmacen    FROM public.solicitud_solicitudesDetalle sol , public.solicitud_descripcioncompra des, public.solicitud_tiposcompra tip, public.solicitud_presentacion pres, public.mae_articulos art    , public.solicitud_usuarios usu , public.solicitud_usuarios usu1 , public.solicitud_estadosvalidacion est, public.solicitud_estadosvalidacion est1   WHERE sol.id = ' + str(id) + ' AND des.id = sol.descripcion_id and tip.id = sol."tiposCompra_id" and pres.id = sol.presentacion_id and art.codreg_articulo = sol.producto and usu1.id = sol."usuarioResponsableAlmacen_id" and usu.id = sol."usuarioResponsableValidacion_id" and est1.id = sol."estadosAlmacen_id"  and est.id = sol."estadosValidacion_id" ORDER BY sol.item'
+
+        cur.execute(comando)
+        print(comando)
+
+        solicitudDetalle = []
+        # solicitudDetalle.append({"model":"solicitud.solicitudesdetalle"})
+
+        for id, item, descripcion_id, descripcion, tiposCompra_id, tipo, producto,nombre_producto, presentacion_id , presentacion, cantidad, justificacion, tec,usuarioResponsableValidacion_id, usuResp, estValidacion,estadosAlmacen, estadosValidacion_id, especificacionesAlmacen, estadosAlmacen_id , usuAlmacen    in cur.fetchall():
+
+            solicitudDetalle.append(
+                {
+                    #"model": "solicitud.solicitudesdetalle", "pk": id, "fields": {
+                     "id": id, "item": item, "descripcion_id": descripcion_id, "descripcion": descripcion,
+                    "tiposCompra_id": tiposCompra_id, "tiposCompra": tipo,
+                     "producto": producto,"nombre_producto": nombre_producto,
+                    "presentacion_id": presentacion_id,
+                     "presentacion": presentacion, "cantidad": cantidad, "justificacion": justificacion,
+                     "especificacionesTecnicas": tec,
+                    "usuarioResponsableValidacion_id": usuarioResponsableValidacion_id,
+                     "usuarioResponsableValidacion": usuResp, "estadosValidacion": estValidacion,
+                     "estadosAlmacen": estadosAlmacen,
+                     "estadosValidacion_id": estadosValidacion_id,
+                    "especificacionesAlmacen":especificacionesAlmacen, "estadosAlmacen_id":estadosAlmacen_id,
+                    "usuAlmacen":usuAlmacen
+                           })
+
+        miConexion.close()
+        print("solicitudDetalle")
+        print(solicitudDetalle)
+
+        # Cierro Conexion
+
+
+        print ("Me devuelvo a la MODAL")
+
+        return JsonResponse({'pk':solicitudDetalle[0]['id'],'item':solicitudDetalle[0]['item'],
+                             'descripcion_id': solicitudDetalle[0]['descripcion_id'],
+                             'descripcion':solicitudDetalle[0]['descripcion'],'tiposCompra_id':solicitudDetalle[0]['tiposCompra_id'], 'tiposCompra':solicitudDetalle[0]['tiposCompra'],
+                             'producto':solicitudDetalle[0]['producto'],
+                             'nombre_producto': solicitudDetalle[0]['nombre_producto'],
+                             'presentacion_id': solicitudDetalle[0]['presentacion_id'],
+                             'presentacion':solicitudDetalle[0]['presentacion'],
+                             'cantidad':solicitudDetalle[0]['cantidad'],'justificacion':solicitudDetalle[0]['justificacion'],
+                             'especificacionesTecnicas':solicitudDetalle[0]['especificacionesTecnicas'],
+                             'usuarioResponsableValidacion_id': solicitudDetalle[0]['usuarioResponsableValidacion_id'],
+                             'usuarioResponsableValidacion':solicitudDetalle[0]['usuarioResponsableValidacion'],
+                             'estadosValidacion':solicitudDetalle[0]['estadosValidacion'],
+                             'estadosAlmacen': solicitudDetalle[0]['estadosAlmacen'],
+                             'estadosValidacion_id': solicitudDetalle[0]['estadosValidacion_id'],
+                             'especificacionesAlmacen':solicitudDetalle[0]['especificacionesAlmacen'],
+                             'estadosAlmacen_id': solicitudDetalle[0]['estadosAlmacen_id'],
+                             'usuAlmacen': solicitudDetalle[0]['usuAlmacen']
+                             })
+    else:
+        return JsonResponse({'errors':'Something went wrong!'})
+
+def post_deleteAlmacen(request,id):
+    print ("Entre a borrar")
+    solicitudesDetalle = SolicitudesDetalle.objects.get(id=id)
+    solicitudesDetalle.delete()
+    return HttpResponseRedirect(reverse('index'))
+
+# Fin Create your views here. para validacion
+
+
+
+
+
+
+# Fin Create your views here. para Almacen
+
+
+# Create your views here. para Compras
+
+
+
+
+# Fin Create your views here. para Compras
+

@@ -23,15 +23,15 @@ from solicitud import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # Acceso al Programa
-    # Salidas de Menus
+
+    # Solicitud
 
     path('chaining/', include('smart_selects.urls')),
     path('medicalCompras/', views.menuAcceso),
     path('validaAcceso/', views.validaAcceso),
     path('Solicitudes/<str:username>, <str:sedeSeleccionada>,<str:nombreUsuario>, <str:nombreSede>', views.Solicitudes),
     path('guardarSolicitudes/<str:username>, <str:sedeSeleccionada>,<str:nombreUsuario>, <str:fecha>, <str:nombreSede>, <str:area>',       views.guardarSolicitudes),
-    path('GuardarValidacion/<str:username>, <str:sedeSeleccionada>,<str:nombreUsuario>, <str:nombreSede>, <str:enviovalidacionDef>',        views.GuardarValidacion),
+    #path('GuardarValidacion/<str:username>, <str:sedeSeleccionada>,<str:nombreUsuario>, <str:nombreSede>, <str:enviovalidacionDef>',        views.GuardarValidacion),
     path('salir/', views.salir),
 
     # Validacion
@@ -39,7 +39,6 @@ urlpatterns = [
     path('ValidacionConsulta/<str:username>, <str:sedeSeleccionada>,<str:nombreUsuario>, <str:nombreSede>', views.ValidacionConsulta),
     path('ValidacionConsulta/ValidacionBusca/', views.PostStoreValidacion.as_view(),name='post_storeValidacion'),
     path('fetch/>', views.load_dataValidacion, name='load_dataValidacion'),
-    path('ValidacionConsulta/ValidacionBusca/', views.post_editValidacion, name='post_editValidacion'),
     path('ValidacionConsulta/ValidacionBusca/postValidacion/<int:id>,<str:username>,<str:sedeSeleccionada>,<str:nombreUsuario>,<str:nombreSede>,<str:solicitudId>/edit/', views.post_editValidacion, name='post_editValidacion'),
     path('load_dataValidacion/<str:solicitudId>', views.load_dataValidacion, name='load_dataValidacion'),
     path('postValidacion/<int:id>/delete', views.post_deleteValidacion, name='post_deleteValidacion'),
@@ -47,10 +46,14 @@ urlpatterns = [
 
     # Fin Validacion
 
-
     # Almacen
-
-
+    path('AlmacenConsulta/<str:username>, <str:sedeSeleccionada>,<str:nombreUsuario>, <str:nombreSede>', views.AlmacenConsulta),
+    path('AlmacenConsulta/AlmacenBusca', views.PostStoreAlmacen.as_view(),name='post_storeAlmacen'),
+    path('fetch/>', views.load_dataAlmacen, name='load_dataAlmacen'),
+    path('load_dataAlmacen/<str:solicitudId>', views.load_dataAlmacen, name='load_dataAlmacen'),
+    path('AlmacenConsulta/postAlmacen/<int:id>,<str:username>,<str:sedeSeleccionada>,<str:nombreUsuario>,<str:nombreSede>,<str:solicitudId>/edit/',       views.post_editAlmacen, name='post_editAlmacen'),
+    path('postAlmacen/<int:id>/delete', views.post_deleteAlmacen, name='post_deleteAlmacen'),
+    path('AlmacenConsulta/AlmacenBusca/postAlmacen/<int:id>/delete', views.post_deleteAlmacen, name='post_deleteAlmacen'),
 
     # Fin Almacen
 
