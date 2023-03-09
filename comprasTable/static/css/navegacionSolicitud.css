@@ -93,7 +93,7 @@ ul.tabs li a .tab-text{
 
 .scrollable
 {
-    width: 800px;
+    width: 1300px;
     height: 150px;
     overflow:scroll;
 }
@@ -103,4 +103,16 @@ ul.tabs li a .tab-text{
     width: 800px;
     height: 250px;
     overflow:scroll;
+}
+
+.scrollablet
+{
+    width: 1300px;
+    height: 200px;
+    overflow:scroll;
+}
+
+span1 {
+  display: inline-block;
+  width: 500px;
 }

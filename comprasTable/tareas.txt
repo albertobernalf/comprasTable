@@ -1,12 +1,26 @@
-Tareas:
+Tareas: comprasTable
+
+1. Rutina Correo
+2. Los deletes se bloquean cuano borra mas de uno. Verificar
+3. Combo areas dse pierde
+4. Ingresdar a la .224 y crear el nuevo sitio web ejemplo 8085 que apunte a pruebas por el momento...
+5 cuanto valido la compra me oblica a colocar espec tecnicas si no saca error
+6 ojo cuando consulta y luego a crear solicitudes pierde la sede
+7. Le pongo 15 dias para compras
+8. validacion de campos Form
+9. Rutina descarga excel ...
+10. grabacion de las solicitudes aprobadas en la OC
+11. Solo se pueden hacer ordenes de compra de items de solcitud aprobados
+12. seria buenio un calendario en orden de compra
+13. las ordenes pero que sean aprobadas por almacen y que no tengan generados ordenes de compra
+14. terminar rutina de impresion excel orden de compra
+15. crear rutina de descarguee de archivo
+16. faltan otras cositas que no me acuerdo despacito pero que quede casi perfect...
+17. git
+18. menu consulta
+19. consulta ordenes de compra
 
 
-1. Averiguar como desplegar un combo en una ventana modla
-2. Mañana copiar de compras3 la rutina que cambia a nuevo usuario la validacion y actulaiza el estado si ha cambiado si no nop
-2.5 Arreglar validacion consulta
-3. Personalizar todos los nombes de los def para valiodacion, para seguir msimo esquema en almacen y compras
-4. Verificar toddas las variables context no se pierdan
-5. LISTOP. seguir con Almacen
-6. HAcer el correo
-7. Los deletes de nuevo funcionan mal
-8. Ingresdar a la .224 y crear el nuevo sitio web ejemplo 8087 que apunte a pruebas por el momento...
+8. ve excel orden de compra como desde python igualito al formato
+
+

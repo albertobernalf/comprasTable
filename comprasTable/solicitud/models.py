@@ -121,7 +121,10 @@ class Proveedores(models.Model):
     id = models.AutoField(primary_key=True)
     codreg_proveedor = models.CharField(max_length=50, unique = True)
     proveedor = models.CharField(max_length=80, unique = True)
-    correo = models.CharField(max_length=200)
+    nit = models.CharField(max_length=30, unique = True, default='')
+    direccion = models.CharField(max_length=80, unique=False, default='')
+    telefono = models.CharField(max_length=30,unique=False, default=0)
+    correo =  models.EmailField(max_length=200)
     estadoreg = models.CharField(max_length=1, default='A', editable=True ,choices=TIPO_CHOICES,)
 
     def __str__(self):
@@ -190,12 +193,68 @@ class SolicitudesDetalle(models.Model):
     entregadoAlmacen = models.IntegerField(default=0)
     usuarioResponsableAlmacen = models.ForeignKey('Usuarios', default=1, on_delete=models.PROTECT, null=True, related_name='uusuariosResponsableAlmacen')
     estadosAlmacen = models.ForeignKey('EstadosValidacion', default=1, on_delete=models.PROTECT, null=True, related_name='eestadosAlmacen')
-
     especificacionesCompras = models.CharField(max_length=300, default='')
     usuarioResponsableCompra = models.ForeignKey('Usuarios', default=1, on_delete=models.PROTECT, null=True,    related_name='uusuariosResponsableCompra')
-    estadosCompras = models.ForeignKey('EstadosValidacion', default=1, on_delete=models.PROTECT, null=True,
-                                       related_name='eestadosCompras')
+    estadosCompras = models.ForeignKey('EstadosValidacion', default=1, on_delete=models.PROTECT, null=True, related_name='eestadosCompras')
+    ordenCompra    = models.ForeignKey('OrdenesCompra',  on_delete=models.PROTECT, null=True, related_name='oordenesCompra')
+    solicitadoOrdenCantidad = models.DecimalField(max_digits=20, decimal_places=2,default=0)
+    recibidoOrdenCantidad   = models.DecimalField(max_digits=20, decimal_places=2,default=0)
+    valorUnitario           = models.DecimalField(max_digits=20, decimal_places=2,default=0)
+    iva                     = models.DecimalField(max_digits=20, decimal_places=2,default=0)
+    solicitadoOrdenValor    = models.DecimalField(max_digits=20, decimal_places=2,default=0)
+    recibidoOrdenValor      = models.DecimalField(max_digits=20, decimal_places=2,default=0)
     estadoreg = models.CharField(max_length=1, default='A', editable=True ,choices=TIPO_CHOICES,)
 
     def __str__(self):
         return self.estadoreg
+
+
+class OrdenesCompra(models.Model):
+    VIGENTE = 'V'
+    CADUCA = 'C'
+    ESTADO_ORDEN = (
+        (VIGENTE, 'Vigente'),
+        (CADUCA, 'Caduca'),
+    )
+    CONTRA_ENTREGA = 'C'
+    ANTICIPO = 'A'
+    NOVENTADIAS = 'N'
+    OPCIONES = (
+        (CONTRA_ENTREGA, 'Contra entrega'),
+        (ANTICIPO, 'Anticipo'),
+        (NOVENTADIAS, 'Noventa dias'),
+    )
+    ACTIVO = 'A'
+    INACTIVO = 'I'
+    TIPO_CHOICES = (
+        (ACTIVO, 'Activo'),
+        (INACTIVO, 'Inactivo'),
+    )
+
+    id             = models.AutoField(primary_key=True)
+    fechaElab      = models.DateTimeField(default=now, editable=True)
+    fechaRevi      = models.DateTimeField(default=now, editable=True)
+    fechaApro      = models.DateTimeField(default=now, editable=True)
+    estadoOrden    = models.CharField(max_length=1, default='A', editable=True ,choices=ESTADO_ORDEN,)
+    elaboro        = models.ForeignKey('Usuarios', default=1, on_delete=models.PROTECT, null=True,related_name='uusuariosElaboro')
+    revizo         = models.ForeignKey('Usuarios', default=1, on_delete=models.PROTECT, null=True,related_name='uusuariosrEVIZO')
+    aprobo         = models.ForeignKey('Usuarios', default=1, on_delete=models.PROTECT, null=True,related_name='uusuariosaPROBO')
+    area           = models.ForeignKey('Areas', default=1, on_delete=models.PROTECT, null=True, related_name='aareasoRDENES')
+    contacto       = models.CharField(max_length=120, default='')
+    entregarEn     = models.CharField(max_length=120, default='')
+    telefono       = models.CharField(max_length=30, default='')
+    proveedor      = models.ForeignKey('Proveedores', default=1, on_delete=models.PROTECT, null=True,related_name='pproveedores')
+    opciones       = models.CharField(max_length=1, default='A', editable=True ,choices=OPCIONES,)
+    valorBruto     = models.DecimalField(max_digits=20, decimal_places=2)
+    descuento      = models.DecimalField(max_digits=20, decimal_places=2)
+    valorParcial   = models.DecimalField(max_digits=20, decimal_places=2)
+    iva            = models.DecimalField(max_digits=20, decimal_places=2)
+    valorTotal     = models.DecimalField(max_digits=20, decimal_places=2)
+    observaciones  = models.CharField(max_length=300, default='')
+    responsableCompra = models.ForeignKey('Usuarios', default=1, on_delete=models.PROTECT, null=True,related_name='uusuariosResp')
+    entragaMercancia  = models.ForeignKey('Usuarios', default=1, on_delete=models.PROTECT, null=True,related_name='uusuariosEntrega')
+    recibeMercancia   = models.ForeignKey('Usuarios', default=1, on_delete=models.PROTECT, null=True,related_name='uusuariosRecibe')
+    estadoReg      = models.CharField(max_length=1, default='A', editable=True ,choices=TIPO_CHOICES,)
+
+    def __str__(self):
+        return self.observaciones

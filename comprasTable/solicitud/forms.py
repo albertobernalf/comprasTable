@@ -1,12 +1,12 @@
 from django import forms
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from .models import Solicitudes, SolicitudesDetalle, EstadosValidacion
-from solicitud.models import Usuarios, SedesCompra, Areas, EstadosValidacion
+from solicitud.models import Usuarios, SedesCompra, Areas, EstadosValidacion, OrdenesCompra, Proveedores
 import django.core.validators
 import django.core.exceptions
 from django.core.exceptions import ValidationError
-
-
+from django.forms.widgets import NumberInput
+import datetime
 
 
 class solicitudesForm(forms.ModelForm):
@@ -66,3 +66,55 @@ class solicitudesDetalleForm(forms.ModelForm):
           #  'solicitud_id': forms.TextInput(attrs={'readonly': 'readonly'}),
 
         }
+
+
+class ordenesCompraForm(forms.ModelForm):
+
+    class Meta:
+        model = OrdenesCompra
+
+        id = forms.IntegerField(label='Orde de Compra No', disabled=True, initial=0)
+        fechaElab = forms.DateField(initial=datetime.date.today)
+        fechaRevi = forms.DateField(initial=datetime.date.today)
+        fechaApro = forms.DateField(initial=datetime.date.today)
+        estadoOrden =  forms.CharField(label='estadoOrdenon', max_length=1)
+        elaboro_id = forms.IntegerField(label='Usuario', disabled=True, initial=0)
+        revizo_id = forms.IntegerField(label='Usuario', disabled=True, initial=0)
+        aprobo_id = forms.IntegerField(label='Usuario', disabled=True, initial=0)
+        area_id = forms.ModelChoiceField(queryset=Areas.objects.all())
+        contacto =  forms.CharField(max_length=120)
+        entregarEn =  forms.CharField(max_length=120)
+        telefono =   forms.CharField(max_length=120)
+        proveedor_id = forms.ModelChoiceField(queryset=Proveedores.objects.all())
+        opciones =  forms.CharField(max_length=10)
+        valorBruto  = forms.DecimalField()
+        descuento = forms.DecimalField()
+        valorParcial  = forms.DecimalField()
+        iva = forms.DecimalField()
+        valorTotal = forms.DecimalField()
+        observaciones =   forms.CharField(max_length=300)
+        responsableCompra_id = forms.IntegerField(label='Usuario', disabled=True, initial=0)
+        entragaMercancia_id = forms.IntegerField(label='Usuario', disabled=True, initial=0)
+        recibeMercancia_id = forms.IntegerField(label='Usuario', disabled=True, initial=0)
+        #estadoReg = forms.CharField(max_length=120)
+
+        fields = '__all__'
+
+        widgets = {
+
+            'id': forms.TextInput(attrs={'readonly': 'readonly'}),
+
+
+        }
+
+        def clean_contacto(self):
+            print ("Entre Contacto")
+            data = self.cleaned_data['contacto']
+
+            print("Esto se digito", data)
+
+            # Check date is not in past.
+            if not data:
+                 raise ValidationError(_('Campo Obligatorio'))
+
+            return data

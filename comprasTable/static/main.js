@@ -6,9 +6,12 @@ var seriali = new Array();
 var serialiSol = new Array();
 var serialiSol1 = new Array();
 var serialiSol1Bak = new Array();
+var serialiSolBak = new Array();
+var serialiSolBak1 = new Array();
 
 var FinalFormData =  new FormData()   ;
 var envioSol = new FormData()
+var envioSolBak = new FormData()
 var envio1 = new FormData()
 
 var filas = {};
@@ -38,7 +41,6 @@ $("#btnSolCrea").click(function() {
      alert( "Por favor de a un solo click." );
    }
  });
-
 
 
 function guardarSolicitud()
@@ -161,7 +163,7 @@ function guardarSolicitud()
                 window.location.reload()
                 document.getElementById("mensajes").innerHTML = respuesta;
 
-               // alert("LISTO")
+                  // alert("LISTO")
                     },
 	   		    error: function (request, status, error) {
 	   	    	}
@@ -697,13 +699,7 @@ function validaSolicitud()
                 preventDefault();
                 }
 
-
-
-
             // Fin rutina filtrado de campos
-
-
-
 
 		tds += '</tr>';
 
@@ -719,7 +715,6 @@ function validaSolicitud()
         serialiSol.push(envioSol);
 
         addAEvent();
-
 
    });
 
@@ -738,63 +733,85 @@ function addAEvent(){
 
 					        if(column_num == 7)
 					        	{
-                                alert("row_num =" + row_num);
+                          //      alert("row_num =" + row_num);
 
-                                console.log("serialiSol despues de borrar");
+                                console.log("serialiSol antes de borrar");
                                 console.log(serialiSol);
+                               // serialiSol.splice((row_num-1) , 1)
 
 					        	$(this).closest('tr').remove();
-                                    alert("Acabo de borrar fila de tabla visual");
 
-					        	// voy a pasarlas a otro arreglo a ver que pasa
 
-                                alert("voy 1");
-
-                                 serialiSol.forEach(function(serialiSo, index)
-                                   {
-                                    console.log(`${index} : ${serialiSo}`);
-                                    alert("voy 2");
-
-                                    if (index == 0 )
-                                    {
-                                        alert("voy 3");
-                                        let unico = serialiSol.filter((serialiSo, indice) => indice == 0);
-                                          alert("voy 4");
-                                        console.log("unico =" + unico);
-
-                                        for (const pair of unico.entries()) {
-                                          console.log(`${pair[0]}, ${pair[1]}`);
-
-                                          let contador = 1;
-                                            let borrarDesde = (row_num-1)*6 + 1;
-                                            let borrarHasta = borrarDesde + 5;
-                                             console.log ("Voy a ADICIONAR");
-                                              alert("voy 5");
-                                            for ( const pair1 of pair[1] )
-                                            {
-                                             contador=contador+1;
-                                                if (contador <  borrarDesde || contador >  borrarHasta )
-                                                       {
-                                                        FinalFormData.append(pair1[0] , pair1[1]);
-
-                                                         console.log(`${pair1[0]}, ${pair1[1]}`);
-
-                                                        } // Cierra if
-                                            } // Cierra For
-
-                                              console.log("FinalFormData = " ,FinalFormData );
-
-                                            } // Cierra For
-                                    }  // Cierra el If solo coge el 0
-
-                                    }); // Cierra el for each dE SERIALISOL SOLO COGE EL 0
-                                    alert("voy 10");
-                                    serialiSol[0] = FinalFormData;
                                 //  event.preventDefault();
-					        } // Fin ifcolumn = 7
+
+
+    					        var voy = 0;
+
+    					        var desdeBorra = (row_num-1) * 6 + 1;
+
+    					        if ((row_num-1) == 0)
+    					            {
+    					             var hastaBorra = 6;
+    					             }
+    					        else
+   					               {
+                                    var hastaBorra =desdeBorra + 5;
+                                    }
+
 					         console.log("Asi quedo serialiSol Nuevo");
                              console.log(serialiSol);
+                             serialiSol.forEach((numero, index, arreglo) => {
+                                        console.log(arreglo);
+                                //        alert ("index = " + index);
 
+                                        if (index==0)
+                                        {
+
+                                        serialiSolBak1 = serialiSol[0];
+
+
+                                       // serialiSolBak1.forEach((numero, index, arreglo) => {
+                                       //   if (index != (row_num-1))
+                                       //   {
+                                                  for (const pair of serialiSolBak1.entries())
+                                                        {
+                                                        voy = voy +1;
+                                                        if (voy>=desdeBorra && voy<=hastaBorra )
+                                                        {
+                                                                    console.log("No aplica");
+
+                                                            }
+                                                            else
+                                                            {
+                                                      //       alert("pair[0] =" + pair[0] + "- " +pair[1])
+                                                        envioSolBak.append(pair[0], pair[1])
+                                                         console.log(`${pair[0]}, ${pair[1]}`);
+                                                            }
+                                                        }
+                                                    serialiSolBak.push(envioSolBak);
+                                       //     } // termina If Interno
+                                       //      }); // Termina For each Interno
+
+                                        } // Termina IF
+                                 });
+
+
+                               console.log('ESTO QUEDO : ')
+                               serialiSolBak.forEach((numero, index, arreglo) => {
+
+                                         for (const pair of numero.entries())
+                                                 {
+                                             console.log(`${pair[0]}, ${pair[1]}`);
+                                               }
+
+                                }); // Termina el For Each
+                                serialiSol = serialiSolBak;
+
+                             // alert ("serialisol queda " + JSON.stringify(serialiSol));
+                             alert("Salgo de rurina");
+                       } // Fin ifcolumn = 7
+
+                    event.preventDefault();
 
 				}); // Fin TablaSolicitud evento
 } // Fin function  AddEvent

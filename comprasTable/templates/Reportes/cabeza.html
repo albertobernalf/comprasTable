@@ -72,7 +72,16 @@
         }
 
     </style>
+<style>
+        /* Modify the background color */
 
+        .navbar-custom {
+            background-color: lightblue;
+        }
+        /* Modify brand and text color */
+
+
+    </style>
 </head>
 
 <body>
@@ -81,12 +90,16 @@
 
 <input type="hidden" class="form-control" id="username" name="username" value={{ Username }}>
 <input type="hidden" class="form-control" id="sedeSeleccionada" name="sedeSeleccionada" value={{ SedeSeleccionada }}>
-<input type="text" class="form-control" id="nombreUsuario" name="nombreUsuario" value={{NombreUsuario}}>
+<input type="hidden" class="form-control" id="nombreUsuario" name="nombreUsuario" value={{NombreUsuario}}>
 <input type="hidden" class="form-control" id="nombreSede" name="nombreSede" value={{ NombreSede }}>
 
 <div class="row">
     <div class="col-lg-12">
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+     <!--    <nav class="navbar navbar-expand-lg navbar-light bg-light">  -->
+    <!-- <nav class="navbar navbar-expand-lg navbar-custom"> -->
+     <!--   <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #e3f2fd;"> -->
+             <nav class="navbar  navbar-expand-lg  navbar-light" style="background-color: #fde3e9;">
+
             <div class="container-fluid">
                 <a class="navbar-brand" href="#"></a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
@@ -97,8 +110,8 @@
 
                 <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                     <div class="navbar-nav">
-                        <a class="nav-link active" aria-current="page" href="#">Mision</a>
-                        <a class="nav-link"
+                       <a class="nav-link active" aria-current="page" href="#">Mision</a>
+                        <a class="nav-link "
                            href="/Solicitudes/{{Username}}, {{SedeSeleccionada}}, {{NombreUsuario}} , {{NombreSede}}">Solicitudes</a>
                         <a class="nav-link"
                            href="/ValidacionConsulta/{{Username}}, {{SedeSeleccionada}}, {{NombreUsuario}} , {{NombreSede}}">Validacion</a>
@@ -107,8 +120,11 @@
                         <a class="nav-link"
                            href="/ComprasConsulta/{{Username}}, {{SedeSeleccionada}}, {{NombreUsuario}} , {{NombreSede}}">Notif.Compras</a>
                         <a class="nav-link"
-                           href="/ordenesDeCompra/{{Username}}, {{SedeSeleccionada}}, {{NombreUsuario}} , {{NombreSede}}">Ordenes
+                           href="/ordenesCompra/{{Username}}, {{SedeSeleccionada}}, {{NombreUsuario}} , {{NombreSede}}">Ordenes
                             de Compra</a>
+                        <a class="nav-link"
+                           href="/solicitudesConsulta/{{Username}}, {{SedeSeleccionada}}, {{NombreUsuario}} , {{NombreSede}}">Consulta
+                            </a>
 
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
@@ -122,10 +138,14 @@
 
 
                         <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
-                        <a class="nav-link" href="/salir">Salir</a>
+                       <a class="nav-link" href="/salir">Salir</a>
+
+
+
 
                     </div>
                 </div>
+
             </div>
         </nav>
     </div>
@@ -212,6 +232,9 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.43/css/bootstrap-datetimepicker-standalone.css">
 <script type="text/javascript"
         src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.43/js/bootstrap-datetimepicker.min.js"></script>
+
+ <!--     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">  -->
+  <!--  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>  -->
 
 <!-- Fin  Esto es Bootstrap -->
 

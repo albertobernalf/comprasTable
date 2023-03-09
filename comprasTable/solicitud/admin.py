@@ -3,7 +3,7 @@ from django import forms
 
 # Register your models here.
 
-from solicitud.models import SedesCompra, Usuarios, TiposCompra, EstadosValidacion, Presentacion, DescripcionCompra, Proveedores, Areas, Solicitudes, SolicitudesDetalle
+from solicitud.models import SedesCompra, Usuarios, TiposCompra, EstadosValidacion, Presentacion, DescripcionCompra, Proveedores, Areas, Solicitudes, SolicitudesDetalle, OrdenesCompra
 
 @admin.register(SedesCompra)
 class sedesCompraAdmin(admin.ModelAdmin):
@@ -64,9 +64,9 @@ class descripcionCompraAdmin(admin.ModelAdmin):
 @admin.register(Proveedores)
 class proveedoresAdmin(admin.ModelAdmin):
 
-    list_display = ("codreg_proveedor", "proveedor", "correo", "estadoreg")
-    search_fields = ("codreg_proveedor", "proveedor", "correo", "estadoreg")
-    list_filter = ("codreg_proveedor", "proveedor", "correo", "estadoreg")
+    list_display = ("codreg_proveedor", "proveedor","nit","direccion", "telefono", "correo", "estadoreg")
+    search_fields = ("codreg_proveedor", "proveedor","nit","direccion", "telefono", "correo", "estadoreg")
+    list_filter = ("codreg_proveedor", "proveedor","nit","direccion", "telefono", "correo", "estadoreg")
 
 @admin.register(Areas)
 class areasAdmin(admin.ModelAdmin):
@@ -88,4 +88,12 @@ class solicitudesDetalleAdmin(admin.ModelAdmin):
     list_display = ("solicitud", "item", "descripcion", "tiposCompra","cantidad","presentacion","producto","justificacion","estadosSolicitud","usuarioResponsableValidacion","especificacionesTecnicas","estadosValidacion","especificacionesCompras")
     search_fields = ("solicitud", "item", "descripcion", "tiposCompra","cantidad","presentacion","producto","justificacion","estadosSolicitud","usuarioResponsableValidacion","especificacionesTecnicas","estadosValidacion","especificacionesCompras")
     list_filter = ("solicitud", "item", "descripcion", "tiposCompra","cantidad","presentacion","producto","justificacion","estadosSolicitud","usuarioResponsableValidacion","especificacionesTecnicas","estadosValidacion","especificacionesCompras")
+
+@admin.register(OrdenesCompra)
+class ordenesCompraAdmin(admin.ModelAdmin):
+
+    list_display = ("id", "fechaElab", "fechaRevi", "fechaApro","estadoOrden","observaciones")
+    search_fields = ("id", "fechaElab", "fechaRevi", "fechaApro","estadoOrden","observaciones")
+    list_filter = ("id", "fechaElab", "fechaRevi", "fechaApro","estadoOrden","observaciones")
+
 

@@ -37,7 +37,9 @@ update solicitud_sedesCompra set direccion = 'Cl. 1d # 17A - 35' where codreg_se
 update solicitud_sedesCompra set direccion = 'Cra 102 # 17-49/57' where codreg_sede = 'SF' ;
 update solicitud_sedesCompra set direccion = 'Cr 21 No 169 15/25 Bodega 2' where codreg_sede = 'MT' ;
 
- 
+--52973594
+-- 12345
+ SELECT t.codreg_poblacion id, t.desc_poblacion nombre FROM public.mae_poblacion t
    
 -- Usuarios : Problema
 delete from solicitud_usuarios;
@@ -88,18 +90,6 @@ select * from solicitud_usuarios;
 B4s32023*
 
 
--- Proveedores -- Problemas  UTF8
-
-select * from mae_proovedores;
-
-
-insert into solicitud_proveedores (codreg_proveedor, proveedor,correo,estadoReg)
-select codreg_proovedor, translate(btrim(proovedor::text),'óÓáÁéÉíÍúÚñÑ'::text,'oOaAeEiIuUnN'::text),'adminbd@clinicamedical.com.co','A' 
-from mae_proovedores
-where activo = 'S';
-
-update solicitud_proveedores set correo='';
-
 
 
 delete from public.solicitud_solicitudes;;
@@ -136,3 +126,50 @@ SELECT translate(btrim(area::text),'óÓáÁéÉíÍúÚñÑ'::text,'oOaAeEiIuUn
 FROM dblink('mycon1', 'SELECT area   FROM mae_areas'::text)
  c(area character varying  (80));
 
+
+
+
+-- Proveedores -- Problemas  UTF8
+
+select * from mae_proovedores;
+
+create extension dblink;
+ 
+SELECT dblink_connect ('mycon1','host=192.168.0.237 user=postgres password=BD_m3d1c4l dbname=bd_imhotep') ;
+
+
+
+select * from solicitud_proveedores ;
+drop table proveedores_2023;
+
+CREATE TABLE proveedores_2023 (codreg_proveedor  character varying(50), proveedor character varying(80), correo character varying(200),estado character varying(1), direccion character varying(80), nit character varying(30),telefono  character varying(30));
+ 
+-- Para copiar los datos desde Excel a la Tavbla
+
+select * from proveedores_2023 where direccion is null;
+update  proveedores_2023 set direccion = '.' where direccion is null;
+select * from proveedores_2023 where telefono is null;
+update  proveedores_2023 set telefono = '0' where telefono ='.';
+
+
+select * from solicitud_proveedores;
+
+COPY proveedores_2023  FROM '/mnt/sda3/PostgreSQL/9.4/ComprasTable/proveedores.csv' HEADER CSV DELIMITER ';';
+
+insert into solicitud_proveedores (codreg_proveedor, proveedor,correo,estadoReg, direccion, nit, telefono)
+select codreg_proveedor, translate(btrim(proveedor::text),'óÓáÁéÉíÍúÚñÑ'::text,'oOaAeEiIuUnN'::text),
+			 translate(btrim(correo::text),'óÓáÁéÉíÍúÚñÑ'::text,'oOaAeEiIuUnN'::text),
+			'A', 
+			translate(btrim(direccion::text),'óÓáÁéÉíÍúÚñÑ'::text,'oOaAeEiIuUnN'::text),
+			translate(btrim(nit::text),'óÓáÁéÉíÍúÚñÑ'::text,'oOaAeEiIuUnN'::text),
+			translate(btrim(telefono::text),'óÓáÁéÉíÍúÚñÑ'::text,'oOaAeEiIuUnN'::text)
+from proveedores_2023;
+
+
+
+
+select * from proveedores_2023;  -- 159 reg
+
+-- Se valida
+
+INSERT INTO solicitud_solicitudesdetalle ( item ,  cantidad ,  justificacion ,  "especificacionesTecnicas" ,  "especificacionesAlmacen" ,  "especificacionesCompras" ,  estadoreg ,             descripcion_id, "estadosAlmacen_id", "estadosCompras_id", "estadosSolicitud_id", "estadosValidacion_id", solicitud_id, "tiposCompra_id", "usuarioResponsableValidacion_id", "entregadoAlmacen", presentacion_id, "solicitadoAlmacen", producto,"usuarioResponsableAlmacen_id","usuarioResponsableCompra_id",iva, "recibidoOrdenCantidad","recibidoOrdenValor", "solicitadoOrdenCantidad", "solicitadoOrdenValor", "valorUnitario")  VALUES(1, 10,'se necesitan','','','','A',1, 1, 1, 1, 1, 21, 4,342,0,5, 0,'COMPU001',1,1,0,0,0,0,0,0  )

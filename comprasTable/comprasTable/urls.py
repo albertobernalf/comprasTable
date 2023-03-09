@@ -33,6 +33,12 @@ urlpatterns = [
     path('guardarSolicitudes/<str:username>, <str:sedeSeleccionada>,<str:nombreUsuario>, <str:fecha>, <str:nombreSede>, <str:area>',       views.guardarSolicitudes),
     #path('GuardarValidacion/<str:username>, <str:sedeSeleccionada>,<str:nombreUsuario>, <str:nombreSede>, <str:enviovalidacionDef>',        views.GuardarValidacion),
     path('salir/', views.salir),
+    path('solicitudesConsultaTrae/<str:username>, <str:sedeSeleccionada>,<str:nombreUsuario>, <str:nombreSede>/', views.PostStoreSolicitudesConsulta.as_view(), name='post_storeSolicitudesConsulta'),
+    path('solicitudesConsultaTrae', views.PostStoreSolicitudesConsulta.as_view(), name='post_storeSolicitudesConsulta'),
+    path('solicitudesConsulta/<str:username>, <str:sedeSeleccionada>,<str:nombreUsuario>, <str:nombreSede>/', views.SolicitudesConsulta, name='SolicitudesConsulta'),
+    path('load_dataSolicitudesConsulta/<str:data>/', views.load_dataSolicitudesConsulta, name='load_dataSolicitudesConsulta'),
+    #path('load_dataSolicitudesConsulta/<str:desdeFechaSolicitud>,<str:hastaFechaSolicitud>/', views.load_dataSolicitudesConsulta, name='load_dataSolicitudesConsulta'),
+    #path('load_dataSolicitudesConsulta/', views.load_dataSolicitudesConsulta, name='load_dataSolicitudesConsulta'),
 
     # Validacion
 
@@ -59,9 +65,23 @@ urlpatterns = [
 
     # Compras
 
-
+    path('ComprasConsulta/<str:username>, <str:sedeSeleccionada>,<str:nombreUsuario>, <str:nombreSede>',  views.ComprasConsulta),
+    path('ComprasConsulta/ComprasBusca', views.PostStoreCompras.as_view(), name='post_storeCompras'),
+    path('fetch/>', views.load_dataCompras, name='load_dataCompras'),
+    path('load_dataCompras/<str:solicitudId>', views.load_dataCompras, name='load_dataCompras'),
+    path('ComprasConsulta/postCompras/<int:id>,<str:username>,<str:sedeSeleccionada>,<str:nombreUsuario>,<str:nombreSede>,<str:solicitudId>/edit/', views.post_editCompras, name='post_editCompras'),
+    path('postCompras/<int:id>/delete', views.post_deleteCompras, name='post_deleteCompras'),
+    path('ComprasConsulta/ComprasBusca/postCompras/<int:id>/delete', views.post_deleteCompras, name='post_deleteCompras'),
 
     # Fin Compras
+
+    # Ordenes de Compras
+    path('ordenesCompra/<str:username>, <str:sedeSeleccionada>,<str:nombreUsuario>, <str:nombreSede>', views.OrdenesCompraConsulta),
+    path('ordenesCompra/OrdenesCompraBusca/', views.PostStoreOrdenesCompra.as_view(),name='post_storeOrdenesCompra'),
+    path('load_dataOrdenesCompra/<str:solicitudId>', views.load_dataOrdenesCompra, name='load_dataOrdenesCompra'),
+
+
+    # Fin Ordenes de Compras
 
 
 ]

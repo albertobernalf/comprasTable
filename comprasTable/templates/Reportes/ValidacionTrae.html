@@ -5,11 +5,7 @@
 
 <script>
     window.onload = function(){
-        //   alert("Entre WINDOWS LOAD");
 
-
-
-         // Fina valor a combo
 
 
     }
@@ -103,7 +99,7 @@
           var nombreSede = document.getElementById("nombreSede").value;
           var solicitudId = document.getElementById("solicitudId").value;
 
-          alert("username = " + username);
+            <!-- alert("username = " + username); -->
 
             var post_id = $(this).data('pk');
            <!--  alert("post_id = " + post_id); -->
@@ -273,10 +269,10 @@
                             <div class="col-md-4">
                                 <h6>SEDE: <span class="text-primary">{{solicitud.nom_sede}}</span></h6>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <h6>AREA: <span class="text-primary">{{solicitud.nom_area}}</span></h6>
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-md-3">
                                 <h6>ESTADO: <span class="text-primary">{{solicitud.estadoReg}}</span></h6>
                             </div>
                             <div class="col-md-2 text-end">
