@@ -43,10 +43,15 @@ $("#btnSolCrea").click(function() {
  });
 
 
+function task() {
+    console.log('setTimeout Demo!')
+}
+
+
 function guardarSolicitud()
 {
     // alert("Voy a grabar1 serialisol =" + serialiSol);
-      alert("Asi quedor SerialiSol =" + serialiSol);
+
 
   username = document.getElementById("username").value;
   sedeSeleccionada=  document.getElementById("sedeSeleccionada").value;
@@ -88,8 +93,8 @@ function guardarSolicitud()
 
                             if ( pair[0] == '0')
                               {
-                                alert ("Volviendo a Recorrer Solo pair[0] == 0" + pair[0] + pair[1] )
-                                // alert("Entre Pair[0]" + pair[1])
+
+
                                 transitorio = pair[1]
                                 //alert("hasta el momento transitorio = " + transitorio )
                                  for (const pair2 of transitorio.entries())
@@ -159,7 +164,7 @@ function guardarSolicitud()
                    //$("#tablaSolicitud").empty();  // ops borro todda la tabla
                   // $('#tablaSolicitud tbody tr').remove();
                    $(tablaSolicitud).remove("tr:gt(0)");
-
+                 setTimeout(task, 3000);
                 window.location.reload()
                 document.getElementById("mensajes").innerHTML = respuesta;
 

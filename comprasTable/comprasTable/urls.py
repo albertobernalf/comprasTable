@@ -79,7 +79,13 @@ urlpatterns = [
     path('ordenesCompra/<str:username>, <str:sedeSeleccionada>,<str:nombreUsuario>, <str:nombreSede>', views.OrdenesCompraConsulta),
     path('ordenesCompra/OrdenesCompraBusca/', views.PostStoreOrdenesCompra.as_view(),name='post_storeOrdenesCompra'),
     path('load_dataOrdenesCompra/<str:solicitudId>', views.load_dataOrdenesCompra, name='load_dataOrdenesCompra'),
+    path('descargaArchivo/<str:archivo>', views.descargaArchivo),
 
+
+    path('ordenesCompraConsultaTrae/<str:username>, <str:sedeSeleccionada>,<str:nombreUsuario>, <str:nombreSede>/', views.PostStoreOrdenesCompraConsulta.as_view(), name='post_storeOrdenesCompraConsulta'),
+    path('ordenesCompraConsultaTrae', views.PostStoreOrdenesCompraConsulta.as_view(), name='post_storeOrdenesCompraConsulta'),
+    path('ordenesCompraConsulta/<str:username>, <str:sedeSeleccionada>,<str:nombreUsuario>, <str:nombreSede>/', views.OrdenesCompraConsulta, name='OrdenesCompraConsulta'),
+    path('load_dataOrdenesCompraConsulta/<str:data>/', views.load_dataOrdenesCompraConsulta, name='load_dataOrdenesCompraConsulta'),
 
     # Fin Ordenes de Compras
 

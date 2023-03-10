@@ -4,23 +4,13 @@ Tareas: comprasTable
 2. Los deletes se bloquean cuano borra mas de uno. Verificar
 3. Combo areas dse pierde
 4. Ingresdar a la .224 y crear el nuevo sitio web ejemplo 8085 que apunte a pruebas por el momento...
-5 cuanto valido la compra me oblica a colocar espec tecnicas si no saca error
-6 ojo cuando consulta y luego a crear solicitudes pierde la sede
-7. Le pongo 15 dias para compras
-8. validacion de campos Form
-9. Rutina descarga excel ...
-10. grabacion de las solicitudes aprobadas en la OC
-11. Solo se pueden hacer ordenes de compra de items de solcitud aprobados
-12. seria buenio un calendario en orden de compra
-13. las ordenes pero que sean aprobadas por almacen y que no tengan generados ordenes de compra
-14. terminar rutina de impresion excel orden de compra
-15. crear rutina de descarguee de archivo
-16. faltan otras cositas que no me acuerdo despacito pero que quede casi perfect...
-17. git
-18. menu consulta
-19. consulta ordenes de compra
-
-
-8. ve excel orden de compra como desde python igualito al formato
-
+5. cuanto valido la compra me oblica a colocar espec tecnicas si no saca error, tambien en notif.Compras
+6. ojo cuando consulta y luego a crear solicitudes pierde la sede
+7. validacion de campos Form
+8. seria buenio un calendario en orden de compra
+9. terminar rutina de impresion excel orden de compra
+10. crear rutina de descarguee de archivo
+11. consulta ordenes de compra
+12. Porque ta mal la hora en ordenes compra en revizo, elabo, aprobo
+13. ojo con las cosas quemadas en el software como estado_id = 3 aprobado, etc. Revizar todo el codigo. Valores default = 1, etc OJOO
 
