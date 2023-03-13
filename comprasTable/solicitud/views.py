@@ -53,7 +53,7 @@ from django.views.generic import View
 from django.views.generic import TemplateView
 import openpyxl
 from openpyxl.styles import Font
-
+from decimal import Decimal
 
 # Create your views here.
 
@@ -2088,9 +2088,9 @@ def post_deleteCompras(request,id):
 
 # Create your views here. para Ordenes de Compras
 
-def OrdenesCompraConsulta(request , username, sedeSeleccionada, nombreUsuario, nombreSede):
+def OrdenesCompraConsulta1(request , username, sedeSeleccionada, nombreUsuario, nombreSede):
     pass
-    print ("Entre a consulta Ordenes de Compra solicitud");
+    print ("Entre a consulta Ordenes de Compra1 solicitud");
     context = {}
 
     print("username = ", username)
@@ -2205,11 +2205,11 @@ class PostStoreOrdenesCompra(TemplateView):
 
                 ## Comienzo a preparar la impresion EXCEL  de la Orden de Compra
 
-                my_wb = openpyxl.Workbook()
+                my_wb = openpyxl.Workbook(encoding='ascii')
+
                 my_sheet = my_wb.active
                 fuente1 = Font(name='Century', bold=True, size=11, color='0a0a0a')
                 fuente2 = Font(name='Century', bold=False, size=11, color='0a0a0a')
-
 
                 b1 = my_sheet['B1']
                 b1.value = "NIT 830.507.718-8"
@@ -2318,12 +2318,8 @@ class PostStoreOrdenesCompra(TemplateView):
                 e15 = my_sheet['E15']
                 e15.value = "DATOS DEL PROVEEDOR"
                 e15.font = fuente1
-                print("pase25")
+
                 ## Extraemos los datos del Proveedor
-
-
-
-
 
                 miConexion = psycopg2.connect(host="192.168.0.237", database="bd_solicitudes", port="5432", user="postgres",
                                               password="BD_m3d1c4l")
@@ -2347,46 +2343,54 @@ class PostStoreOrdenesCompra(TemplateView):
                 print(prov)
 
                 for x in prov:
-                    print(x)
+                    print("X = " ,x)
+                    jsonProv= x
+
+                nombreProveedor = jsonProv['nombre']
+                nitProveedor = jsonProv['nit']
+                telefonoProveedor = jsonProv['telefono']
+                direccionProveedor = jsonProv['direccion']
+                correoProveedor = jsonProv['correo']
+
+                print ("nombre Proveedor = ",nombreProveedor )
+                print ("Nit Proveedor = ", nitProveedor)
+                print("telefonoProveedor = ", telefonoProveedor)
+                print("direccionProveedor = ", direccionProveedor)
+                print("correoProveedor = ", correoProveedor)
 
                 ### FIN DATOS DEL PROVEEDOR
 
-                print("DatProv= ", str(prov[0]['nombre']))
-                print("DatProvSin STR = ", prov[0]['nombre'])
-                print("DatProvTEl= ", str(prov[0]['telefono']))
-                print("DatProvNit= ", str(prov[0]['nit']))
-                print("DatProvCorre= ", str(prov[0]['correo']))
-
-                #print("DatProvDir= ", str(prov[0]['direcion']))
-
-
-
+                print("Pase 50")
                 b16 = my_sheet['B16']
                 b16.value = "RAZON SOCIAL"
                 b16.font = fuente2
                 d16 = my_sheet['D16']
-                d16.value = str(datosProv['nombre'])
+                d16.value = str(nombreProveedor)
                 h16 = my_sheet['H16']
-                h16.value = "NIT:"
+                h16.value =  "NIT"
                 h16.font = fuente1
+                print("Pase 51")
                 i16 = my_sheet['I16']
-                i16.value = str(datosProv['nit'])
+                i16.value = str(nitProveedor)
+                print("Pase 52")
                 k16 = my_sheet['K16']
                 k16.value = "TELEFONO:"
                 k16.font = fuente1
+                print("Pase 53")
                 l16 = my_sheet['L16']
-                l16.value = str(datosProv['telefono'])
+                l16.value = str(telefonoProveedor)
                 b17 = my_sheet['B17']
                 b17.value = "DIRECCION:"
                 b17.font = fuente1
                 d17 = my_sheet['D17']
-                d17.value = "algo pasa"
-                #prov[0]['direccion']
+                d17.value = str(direccionProveedor)
+                print("Pase 54")
                 h17 = my_sheet['H17']
                 h17.value = "E-MAIL:"
                 h17.font = fuente1
                 i17 = my_sheet['I17']
-                i17.value = str(datosProv['correo'])
+                i17.value = str(correoProveedor)
+                print("Pase 55")
                 b18 = my_sheet['B18']
                 b18.value = "ATENCION:"
                 b18.font = fuente2
@@ -2433,20 +2437,10 @@ class PostStoreOrdenesCompra(TemplateView):
 
                 print("Armo pah archivo")
 
-                archivo = "C:\\EntornosPython\\comprasTable\\comprasTable\\Archivos\\OC_" + str(idCompra) + ".xlsx"
+                archivo = 'C:/EntornosPython/comprasTable/comprasTable/Archivos/OC_' + str(idCompra) + '.xlsx'
                 print ("Archivo =" , archivo)
 
-                #my_wb.save("OCompra.xlsx")
-                print("Voy a crear archivo")
-
-
-
-                #my_wb.save(archivo)
-
                 ## DESDE AQUI RUTINA ACTUALIZA ITEM EN SOLICITUD DETALLE
-
-                print("Ya esta creado el archivo")
-
                 # Imprimo en un for los valores de los items
 
                 for campo in range(1, totalRegistros + 1):
@@ -2508,15 +2502,9 @@ class PostStoreOrdenesCompra(TemplateView):
 
                     ## Fin detalle Excel
 
-                    ## Fin UPDATE
-                ## HASTA AQUI RUTINA ACTUALIZA ITEM EN SOLICITUD DETALLE
-
-
-                #response = HttpResponse(content_type='application/vnd.ms-excel')
-                #response[  'Content-Disposition'] = 'attachment; filename= ' + "C:\\EntornosPython\\comprasTable\\comprasTable\\Archivos\\OC_78.xlsx"
-                #return response
-
                 #seguimos con la ultima parte del archivo excel
+
+                print ("Pase 56")
                 b27 = my_sheet['B27']
                 b27.value = "FORMA DE PAGO"
                 b27.font = fuente1
@@ -2535,6 +2523,9 @@ class PostStoreOrdenesCompra(TemplateView):
                 e29 = my_sheet['E29']
                 e29.value = "50 %"
                 e29.font = fuente2
+                f29 = my_sheet['F29']
+                f29.value = str(form.cleaned_data['opciones'])
+                f29.font = fuente2
                 c30 = my_sheet['C30']
                 c30.value = "CONTRA ENTREGA"
                 c30.font = fuente2
@@ -2553,6 +2544,7 @@ class PostStoreOrdenesCompra(TemplateView):
                 h27 = my_sheet['H27']
                 h27.value = "VALOR BRUTO"
                 h27.font = fuente1
+                print("Pase 57")
                 l27 = my_sheet['L27']
                 l27.value = str(form.cleaned_data['valorBruto'])
                 h28 = my_sheet['H28']
@@ -2570,7 +2562,7 @@ class PostStoreOrdenesCompra(TemplateView):
                 h30.font = fuente1
                 l30 = my_sheet['L30']
                 l30.value = str(form.cleaned_data['iva'])
-
+                print("Pase 58")
                 h31 = my_sheet['H31']
                 h31.value = "VALOR TOTAL"
                 h31.font = fuente1
@@ -2586,22 +2578,22 @@ class PostStoreOrdenesCompra(TemplateView):
                 b36 = my_sheet['B36']
                 b36.value = "RESPONSABLE ORDEN DE COMPRA:"
                 b36.font = fuente1
+                print("Pase 59")
                 b38 = my_sheet['B38']
                 b38.value = str(form.cleaned_data['responsableCompra'])
 
                 g36 = my_sheet['G36']
                 g36.value = "QUIEN ENTREGA MERCANCIA:"
                 g36.font = fuente1
-                g38 = my_sheet['G3(']
+                print("Pase 60")
+                g38 = my_sheet['G38']
                 g38.value = str(form.cleaned_data['entragaMercancia'])
-
-
                 k36 = my_sheet['K36']
                 k36.value = "QUIEN RECIBE MERCANCIA:"
                 k36.font = fuente1
                 k38 = my_sheet['K38']
                 k38.value = str(form.cleaned_data['recibeMercancia'])
-
+                print("Pase 61")
                 b43 = my_sheet['B43']
                 b43.value = "FIRMA Y SELLO"
                 b43.font = fuente2
@@ -2617,11 +2609,14 @@ class PostStoreOrdenesCompra(TemplateView):
                 e44 = my_sheet['E44']
                 e44.value = "TODA CANTIDAD RECIBIDA, MAYOR A LA SOLICITADA EN LA ORDEN DE COMPRA NO SERÁ PAGADA POR LA CLÍNICA MEDICAL S.A.S"
                 e44.font = fuente2
+                print("Pase Final")
 
                 response = HttpResponse(content_type="application/ms-excel")
                 contenido = "attachment; filename = {0}".format(archivo)
                 response["Content-Disposition"] = contenido
                 my_wb.save(archivo)
+                #my_wb.save(response)
+                #return response
 
                 ## fin excel
 
@@ -2897,16 +2892,14 @@ def descargaArchivo(request, archivo):
 
     print ("Entro A Descargar Archivo")
 
-
-
-    nombreReporte = 'C__EntornosPython_comprasTable_comprasTable_Archivos_OC_81'
+    nombreReporte = 'C:\EntornosPython\comprasTable\comprasTable\Archivos_OC_116'
     nombreReporteFinal = nombreReporte + ".xlsx"
 
     response = HttpResponse(content_type="application/ms-excel")
     #response.write(u'\ufeff'.encode('utf8'))
     contenido = "attachment; filename = {0}".format(nombreReporteFinal)
+    #contenido = "attachment; filename = " + nombreReporteFinal
     response["Content-Disposition"] = contenido
-
 
     return response
 
@@ -2971,38 +2964,35 @@ def load_dataOrdenesCompraConsulta(request, data):
     cur = miConexion.cursor()
     cur.execute("set client_encoding='LATIN1';")
     print("voy comando")
-    comando = 'SELECT sol.id id,substring(to_char(sol0.fecha,' + "'" + 'yyyy-mm-dd' + "'" + '),1,10)  fecha,sol.item item, sol.descripcion_id, des.nombre descripcion, tip.nombre tipo ,sol.producto producto,  art.articulo nombre_producto ,pres.nombre presentacion,sol.cantidad, sol.justificacion  , sol."especificacionesTecnicas" tec, est.nombre estValidacion, sol."estadosValidacion_id" estadosValidacion_id , usu.nom_usuario usuSolicitud FROM public.solicitud_solicitudes sol0, public.solicitud_solicitudesDetalle sol , public.solicitud_descripcioncompra des, public.solicitud_tiposcompra tip, public.solicitud_presentacion pres, public.mae_articulos art    , public.solicitud_usuarios usu , public.solicitud_estadosvalidacion est      WHERE sol0.fecha >= ' + "'" + desdeFechaSolicitud + "'" + ' and sol0.fecha <= ' + "'"  + hastaFechaSolicitud + "'" + '  and sol0.id = sol.solicitud_id and des.id = sol.descripcion_id and tip.id = sol."tiposCompra_id" and pres.id = sol.presentacion_id and art.codreg_articulo = sol.producto and usu.id = sol0."usuarios_id" and est.id = sol."estadosValidacion_id"  ORDER BY sol0.fecha, sol.item'
+    comando = 'select ord.id id, substring(to_char(ord."fechaElab",' + "'" +'yyyy-mm-dd' + "'" + '),1,10) fechaElab, ord."estadoOrden" estadoOrden ,ord.opciones opciones,ord."valorBruto" valorBruto,ord."descuento" descuento,ord."valorParcial" valorParcial, ord."iva" iva, ord."valorTotal" valorTotal,ord.observaciones observaciones,ord.area_id area, ord.proveedor_id proveedor,sol.item item,art.articulo, sol.iva iva,sol."recibidoOrdenCantidad" recibidoOrdenCantidad,sol."solicitadoOrdenCantidad" solicitadoOrdenCantidad ,sol."valorUnitario" valorUnitario	, sol."solicitadoOrdenValor" solicitadoOrdenValor,sol."recibidoOrdenValor" recibidoOrdenValor FROM solicitud_ordenesCompra ord, solicitud_solicitudesdetalle sol, mae_articulos art WHERE ord."fechaElab" >= ' + "'" + desdeFechaSolicitud + "'" + ' and ord."fechaElab" <= ' + "'" +  hastaFechaSolicitud + "'" + ' and ord.id = sol."ordenCompra_id" and sol.producto = art.codreg_articulo ORDER BY ord."fechaElab", sol.item'
     print("pase comando")
     cur.execute(comando)
     print(comando)
 
-    solicitudDetalle = []
+    ordenCompra = []
 
-    for id, fecha, item, descripcion_id, descripcion, tipo, producto, nombre_producto, presentacion, cantidad, justificacion, tec, estValidacion, estadosValidacion_id, usuSolicitud in cur.fetchall():
-        solicitudDetalle.append(
-            {"model": "solicitud.solicitudesdetalle", "pk": id, "fields":
-                {"id": id, "fecha":fecha, "item": item, "'descripcion_id": descripcion_id, "descripcion": descripcion,
-                  "tiposCompra": tipo,
-                "producto": producto, "nombre_producto": nombre_producto,
-                "presentacion": presentacion, "cantidad": cantidad, "justificacion": justificacion,
-             "especificacionesTecnicas": tec,
-             "estadosValidacion": estValidacion, "estadosValidacion_id": estadosValidacion_id,
-             "usuSolicitud": usuSolicitud}})
+    for id, fechaElab, estadoOrden , opciones,valorBruto ,descuento, valorParcial,iva, valorTotal, observaciones,area,proveedor,item,\
+        articulo, iva,recibidoOrdenCantidad,solicitadoOrdenCantidad,valorUnitario,  solicitadoOrdenValor, recibidoOrdenValor in cur.fetchall():
+        ordenCompra.append(
+            {"model": "solicitud.ordenescompra", "pk": id, "fields":
+                {"id": id, "fechaElab":fechaElab, "estadoOrden": estadoOrden, "opciones": opciones, "valorBruto": valorBruto,
+                  "valorParcial": valorParcial,"descuento":descuento,
+                "iva": iva, "valorTotal": valorTotal, "observaciones": observaciones, "area": area, "proveedor": proveedor,
+             "item": item, "articulo": articulo, "iva": iva,
+             "recibidoOrdenCantidad": recibidoOrdenCantidad,"solicitadoOrdenCantidad": solicitadoOrdenCantidad ,
+                 "valorUnitario":valorUnitario,"solicitadoOrdenValor":solicitadoOrdenValor , "recibidoOrdenValor": recibidoOrdenValor}})
 
     miConexion.close()
-    print("solicitudDetalle")
-    print(solicitudDetalle)
+    print("ordenCompra")
+    print(ordenCompra)
 
     # Cierro Conexion
 
-    context['SolicitudDetalle'] = solicitudDetalle
+    context['OrdenCompra'] = ordenCompra
 
     ## Voy a enviar estadosSolicitudes
 
-    # estadosvalidacionList = EstadosValidacion.objects.all()
-
-    # json1 = serializers.serialize('json', estadosvalidacionList)
-    serialized1 = json.dumps(solicitudDetalle)
+    serialized1 = json.dumps(ordenCompra , cls=DecimalEncoder)
 
     print("Envio = ", json)
 
@@ -3054,4 +3044,10 @@ class PostStoreOrdenesCompraConsulta(TemplateView):
 
             return context
 
+
+class DecimalEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, Decimal):
+            return float(obj)
+        return json.JSONEncoder.default(self, obj)
 ## Fin Consilta Ordenes de Compras

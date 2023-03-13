@@ -76,7 +76,7 @@ urlpatterns = [
     # Fin Compras
 
     # Ordenes de Compras
-    path('ordenesCompra/<str:username>, <str:sedeSeleccionada>,<str:nombreUsuario>, <str:nombreSede>', views.OrdenesCompraConsulta),
+    path('ordenesCompra/<str:username>, <str:sedeSeleccionada>,<str:nombreUsuario>, <str:nombreSede>', views.OrdenesCompraConsulta1),
     path('ordenesCompra/OrdenesCompraBusca/', views.PostStoreOrdenesCompra.as_view(),name='post_storeOrdenesCompra'),
     path('load_dataOrdenesCompra/<str:solicitudId>', views.load_dataOrdenesCompra, name='load_dataOrdenesCompra'),
     path('descargaArchivo/<str:archivo>', views.descargaArchivo),
